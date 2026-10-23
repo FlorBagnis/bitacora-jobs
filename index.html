@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Bitácora Jobs</title>
+<meta name="theme-color" content="#0f6b57">
+<script>try{var t=localStorage.getItem("postulaciones.tema");if(!t){var hm=location.hash.match(/(?:^|[#&])t=(rosa|verde|negro)/);if(hm)t=hm[1]}if(!t)t=matchMedia("(prefers-color-scheme:dark)").matches?"negro":"verde";document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f2f5f3;--card:#fff;--ink:#14221e;--mute:#5d6b66;--line:#d9e1dd;--acc:#0f6b57;--acc2:#0a4a3c;--accink:#fff;--hi:#fff;--bad:#c2410c;--badbg:#fdebe3;--ok:#e3f2ec;--sh:0 1px 2px rgba(15,60,48,.06),0 12px 28px -16px rgba(15,60,48,.30);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="rosa"]{--bg:#fdf0f4;--ink:#3a1f2b;--mute:#855b6d;--line:#f2d4df;--acc:#b8235a;--acc2:#8a1745;--bad:#b4400f;--badbg:#fdeadf;--ok:#fbe1ea;--sh:0 1px 2px rgba(138,23,69,.06),0 12px 28px -16px rgba(138,23,69,.32)}
+:root[data-theme="negro"]{color-scheme:dark;--bg:#000;--card:#101010;--ink:#f2f2f2;--mute:#a6a6a6;--line:#2a2a2a;--acc:#f2f2f2;--acc2:#cfcfcf;--accink:#000;--hi:#f2f2f2;--bad:#ff9a6e;--badbg:#2a160d;--ok:#1a1a1a;--sh:0 0 0 1px #1a1a1a}
+:root[data-theme="negro"] .hero{background:#101010;box-shadow:0 0 0 1px #2a2a2a}
+:root[data-theme="negro"] .tema button[aria-pressed="true"]{box-shadow:0 0 0 2px #101010,0 0 0 4px #f2f2f2}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:1.75rem;margin:0;letter-spacing:-.03em;line-height:1.1}
+.hero{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:linear-gradient(135deg,var(--acc),var(--acc2));color:var(--hi);border-radius:24px;padding:18px;margin:4px 0 18px;box-shadow:var(--sh)}
+.hero img{width:58px;height:58px;border-radius:17px;box-shadow:0 6px 16px rgba(0,0,0,.28);flex:none}
+.hero .ht{flex:1;min-width:190px}
+.sub{opacity:.88;margin:4px 0 0;font-size:.93rem;line-height:1.35}
+.alert{background:var(--badbg);color:var(--bad);border-radius:14px;padding:12px 16px;margin-bottom:12px;font-weight:600}
+.alert.ok,.alert.info{background:var(--ok);color:var(--acc)}
+form{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px;grid-template-columns:1fr 1fr;box-shadow:var(--sh)}
+form .full{grid-column:1/-1}
+.fh{margin:0;font-size:1.05rem}
+label{font-size:.82rem;color:var(--mute);display:grid;gap:5px;font-weight:600}
+input,select,textarea{font:inherit;font-weight:400;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 12px;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 22%,transparent);outline:0}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+button{font:inherit;font-weight:600;font-size:.92rem;cursor:pointer;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;transition:transform .08s,filter .15s}
+button:active{transform:scale(.97)}
+button.main{background:linear-gradient(135deg,var(--acc),var(--acc2));color:var(--accink);border-color:transparent}
+button.main:hover{filter:brightness(1.07)}
+form button.main{padding:13px 14px;font-size:1rem}
+.chips{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--line) transparent;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0 12px;margin:12px 0 8px}
+@media (min-width:700px){.chips{flex-wrap:wrap;overflow-x:visible}}
+.chips button{flex:none;white-space:nowrap;border-radius:99px;padding:6px 14px;font-size:.85rem}
+.chips button.on{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+#qbus{margin-top:18px}
+#list{max-height:70vh;overflow-y:auto;overscroll-behavior:contain;padding:2px 6px 8px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.item{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:18px;padding:15px 16px;margin-bottom:12px;box-shadow:var(--sh)}
+.item[data-e="Postulado"]{border-left-color:var(--mute)}
+.item[data-e="Entrevista"],.item[data-e="Oferta"]{border-left-color:var(--acc)}
+.item[data-e="Rechazado"],.item.late{border-left-color:var(--bad)}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.item h2{font-size:1.1rem;margin:0}
+.role{color:var(--mute);margin:1px 0 0;font-size:.94rem}
+.item a{color:var(--acc);font-size:.86rem;font-weight:600;text-decoration:none;white-space:nowrap}
+.meta{display:flex;gap:8px;flex-wrap:wrap;font-size:.8rem;color:var(--mute);margin:10px 0}
+.meta span{background:var(--bg);border-radius:99px;padding:4px 11px}
+.meta .due{color:var(--bad);background:var(--badbg);font-weight:700}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.acts select{width:auto;font-weight:600;padding:9px 12px}
+button[data-act="del"]{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 35%,var(--line))}
+.empty{text-align:center;color:var(--mute);padding:34px 12px;background:var(--card);border:1px dashed var(--line);border-radius:18px}
+details{margin-top:16px;color:var(--mute);font-size:.92rem}
+main>details{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:4px 18px 16px;box-shadow:var(--sh)}
+main>details>summary{padding:13px 0 6px}
+summary{cursor:pointer;font-weight:700;color:var(--ink)}
+details.mas{margin:12px 0;padding-top:8px;border-top:1px solid var(--line)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.g2 .full{grid-column:1/-1}
+.nt{font:inherit;font-size:.92rem;min-height:88px;resize:vertical}
+.npv{margin:2px 0 10px;padding:9px 12px;border-radius:12px;background:var(--bg);border:1px solid var(--line);color:var(--ink);font-size:.88rem;white-space:pre-wrap;max-height:8em;overflow:auto;word-break:break-word}
+.npv[hidden]{display:none}
+.ent{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:10px 0;font-size:.85rem;color:var(--mute);background:var(--bg);border-radius:14px;padding:10px 12px}
+.ent input{width:auto}.ent .soon{color:var(--acc);font-weight:700}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
+.ck{display:inline-flex;gap:8px;align-items:center;padding:9px 14px;border-radius:99px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-size:.88rem;font-weight:600;cursor:pointer}
+.ck input{width:18px;height:18px;margin:0;padding:0;accent-color:var(--acc)}
+.ck:has(input:checked){border-color:var(--acc);color:var(--acc)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.row input:not([type=checkbox]){flex:1;min-width:160px;width:auto}
+.stat{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:var(--ok);color:var(--acc);font-weight:600;font-size:.88rem}.stat:empty{display:none}
+textarea.bk{font:.8rem/1.3 ui-monospace,monospace;min-height:80px;margin:8px 0}
+.shr{display:inline-flex;gap:10px;align-items:center;background:var(--hi);color:var(--acc2);border:0;border-radius:99px;padding:6px 20px 6px 7px;font-weight:700;font-size:.95rem;white-space:nowrap;text-decoration:none;box-shadow:0 10px 22px -10px rgba(0,0,0,.55),inset 0 -2px 0 rgba(0,0,0,.08);transition:transform .15s}
+.shr .si{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));color:var(--accink);flex:none}
+.shr .si svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.shr:hover{transform:translateY(-2px)}
+:root[data-theme="negro"] .shr{color:#101010}
+:root[data-theme="negro"] .shr .si{background:#101010;color:#f2f2f2}
+.shr.tg{background:transparent;color:var(--hi);box-shadow:none;border:1.5px solid color-mix(in srgb,var(--hi) 60%,transparent)}
+.shr.tg .si{background:var(--hi);color:var(--acc2)}
+:root[data-theme="negro"] .shr.tg{color:#f2f2f2}
+:root[data-theme="negro"] .shr.tg .si{background:#f2f2f2;color:#101010}
+.tema{display:flex;gap:9px;align-items:center;font-size:.78rem;font-weight:600;color:var(--hi)}
+.tema button{width:28px;height:28px;border-radius:50%;padding:0;border:2px solid color-mix(in srgb,var(--hi) 55%,transparent)}
+.tema button[aria-pressed="true"]{border-color:var(--hi);box-shadow:0 0 0 2px var(--acc2),0 0 0 4px var(--hi)}
+.est{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin:10px 0}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.kpi b{display:block;font-size:1.85rem;line-height:1.1;color:var(--ink)}.kpi span{font-size:.8rem}
+.est-h{margin:18px 0 6px;font-size:.92rem;color:var(--ink);font-weight:700}
+.bar{display:grid;grid-template-columns:104px 1fr 28px;gap:10px;align-items:center;margin:6px 0;font-size:.85rem}
+.bar>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trk{height:12px;background:var(--line);border-radius:99px;overflow:hidden}.trk i{display:block;height:100%;border-radius:99px;min-width:3px}.bar b{color:var(--ink);text-align:right}
+.plat{margin:6px 0 0;font-size:.85rem;color:var(--mute)}
+.wk{display:flex;gap:6px;align-items:end;height:110px;margin-top:6px}
+.wk div{flex:1;display:flex;flex-direction:column;justify-content:end;align-items:center;height:100%;font-size:.72rem;gap:3px;min-width:0}
+.wk i{display:block;width:100%;background:linear-gradient(180deg,var(--acc),var(--acc2));border-radius:6px 6px 0 0;min-height:3px}.wk b{color:var(--ink)}
+.priv{font-size:.8rem;color:var(--mute);margin-top:24px}
+.foot{text-align:center;margin:28px 0 0;color:var(--mute);font-size:.9rem}.foot b{color:var(--ink)}
+.ins{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:16px;box-shadow:var(--sh)}.ins h3{margin:0 0 6px;font-size:1rem}.ins ol{margin:6px 0 10px;padding-left:20px}.ins svg{width:18px;height:18px;vertical-align:-3px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hint{margin:4px 0 8px;font-size:.84rem}code{display:block;word-break:break-all;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:.8rem;margin:6px 0;color:var(--ink)}
+.hd{display:flex;gap:10px;align-items:flex-start;min-width:0}.sc{width:20px;height:20px;margin:3px 0 0;padding:0;accent-color:var(--acc);flex:none}.num{color:var(--acc);font-weight:800}
+.bulk{margin:4px 0 10px;font-size:.88rem;color:var(--mute);display:flex;flex-direction:column;gap:8px}.bulk .row{align-items:center;margin:0}.bulk select{width:auto}.bulk b{color:var(--ink)}
+button[data-b="del"]{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 35%,var(--line))}
+.dn{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin:12px 0}.dn svg{width:150px;height:150px;flex:none}.lg{flex:1;min-width:170px;font-size:.88rem}.lg div{display:flex;gap:8px;align-items:center;margin:4px 0}.lg i{width:12px;height:12px;border-radius:50%;flex:none}.lg b{margin-left:auto;color:var(--ink)}
+.au{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0;font-size:.82rem;color:var(--mute)}.au audio{height:34px;max-width:100%}
+button.live{background:var(--bad);color:#fff;border-color:transparent}
+@media print{body{background:#fff;color:#000}.hero,form,.chips,#qbus,#av,#sy,#alert,#ins,.acts,.pills,.item details,.foot,.row,.ent,#est summary{display:none!important}#list{max-height:none;overflow:visible}.item,main>details{box-shadow:none;break-inside:avoid}}
+@media (max-width:480px){form,.g2{grid-template-columns:1fr}.bar{grid-template-columns:88px 1fr 24px}h1{font-size:1.55rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+<img src="icon-192.png" alt="" width="58" height="58">
+<div class="ht"><h1>Bitácora Jobs</h1><p class="sub">Cargá a dónde te postulaste y te muestro cuándo hacer seguimiento.</p></div>
+<div class="tema" id="tema">Color
+<button data-t="rosa" style="background:#f7c6d6" aria-label="Rosa claro" title="Rosa claro"></button>
+<button data-t="verde" style="background:#0f6b57" aria-label="Verde" title="Verde"></button>
+<button data-t="negro" style="background:#000" aria-label="Negro" title="Negro"></button></div>
+<div style="width:100%;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><a class="shr tg" href="https://t.me/NekoJobsLATAM_bot" target="_blank" rel="noopener"><span class="si"><svg viewBox="0 0 24 24"><path d="M21.5 3.5L2.8 10.7c-.9.4-.9 1.1-.2 1.3l4.8 1.5 1.8 5.6c.2.6.4.8.9.8s.7-.2 1-.5l2.4-2.3 4.8 3.5c.9.5 1.5.2 1.7-.8l3.1-14.7c.3-1.2-.4-1.8-1.6-1.3z"/><path d="M7.4 13.5l9.8-6.1"/></svg></span>Buscá trabajo en Telegram</a><button id="share" class="shr" type="button"><span class="si"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/></svg></span>Compartir app</button><span id="shmsg" class="sub" style="margin:0"></span></div>
+</header>
+<div id="alert"></div>
+<div id="ins" class="ins" hidden></div>
+<form id="f">
+<h2 class="full fh">Nueva postulación</h2>
+<label>Empresa<input id="emp" required autocomplete="off"></label>
+<label>Puesto<input id="pue" required autocomplete="off"></label>
+<label>Dónde te postulaste<input id="pla" list="plas" placeholder="Ej: LinkedIn" autocomplete="off"></label>
+<datalist id="plas"></datalist>
+<label>Días para el seguimiento<input id="dias" type="number" min="1" value="7"></label>
+<label>…o elegí el día exacto<input id="segf" type="date"></label>
+<label class="full">Link de la oferta (opcional)<input id="lnk" type="url" placeholder="https://"></label>
+<label class="full">Anotaciones (opcional)<textarea id="fnota" class="nt" placeholder="Requisitos, con quién hablaste, qué preparar…"></textarea></label>
+<details class="full" id="fmas"><summary>Más datos (opcional)</summary>
+<div class="g2">
+<label>Modalidad<select id="fmd"><option value="">Sin indicar</option><option>Remoto</option><option>Híbrido</option><option>Presencial</option></select></label>
+<label>Sueldo<input id="fsue" placeholder="Ej: USD 1500" autocomplete="off"></label>
+<label class="full">Contacto<input id="fcon" placeholder="Nombre, mail o teléfono" autocomplete="off"></label>
+<label class="ck full" style="justify-self:start"><input type="checkbox" id="fcv"><span>📄 CV descargado por la empresa</span></label>
+<label class="ck full" style="justify-self:start"><input type="checkbox" id="fcvv"><span>👁️ CV visto por la empresa</span></label>
+</div></details>
+<div class="full"><button class="main" type="submit" style="width:100%">Guardar postulación</button></div>
+</form>
+<details id="est" open><summary>Estadísticas: cómo vas con tus postulaciones</summary><div id="estb"></div></details>
+<input id="qbus" type="search" placeholder="🔎 Buscar por empresa, puesto, plataforma o nota…" autocomplete="off">
+<div class="chips" id="chips"></div>
+<div class="bulk" id="bulk"></div>
+<div id="list"></div>
+<details id="av"><summary>🔔 Avisos y calendario</summary>
+<p>Los seguimientos avisan a las 9:00 del día. Para las entrevistas elegí cuánto antes querés el aviso:</p>
+<div class="pills" id="antes"></div>
+<section id="pw" hidden><p><b>📲 Avisos con la app cerrada</b></p><p class="hint">El servidor solo guarda la hora de cada aviso y un texto cifrado que únicamente este dispositivo puede abrir.</p><div class="row"><button id="pon" class="main">Activar avisos con la app cerrada</button><button id="poff">Desactivar</button></div><label class="ck"><input type="checkbox" id="mav"><span>Avisarme también por mail</span></label><p id="pst" class="stat"></p></section>
+<div class="row"><button id="ical" class="main">Agregar al calendario</button><button id="noti">Avisarme en este navegador</button></div>
+<p style="font-size:.85rem">Si cambiás una fecha, volvé a tocar «Agregar al calendario»: los avisos ya agregados suelen actualizarse.</p>
+<div class="row"><input id="mail" type="email" placeholder="Tu mail (queda solo en este dispositivo)" autocomplete="email"><button id="mg">Guardar mail</button></div>
+<div class="row"><button id="mm">Mandarme un resumen por mail</button></div>
+<div class="row" id="ivw"><button id="iv">📱 Cómo instalar la app</button></div>
+<p id="avs" class="stat"></p>
+</details>
+<details id="sy"><summary>Sincronizar con mi celular y mi compu</summary>
+<p id="st"></p>
+<div id="off"><button id="mk" class="main">Activar sincronización</button><p>Esto crea un código. Escribilo en tu otro dispositivo. Si ya tenés uno, pegalo acá:</p>
+<div class="row"><input id="ci" placeholder="Pegá tu código" autocomplete="off" spellcheck="false"><button id="cn">Conectar</button></div></div>
+<div id="on" hidden><p>Tu código:</p><code id="cv"></code><div class="row"><button id="cc">Copiar código</button><button id="cd">Desconectar</button></div>
+<p>Guardalo bien: quien tenga el código puede ver y cambiar tus postulaciones. Tus datos viajan cifrados.</p></div>
+<details><summary>Copia manual (sin internet)</summary>
+<textarea id="bk" class="bk" readonly spellcheck="false"></textarea><button id="cp">Copiar mi código de respaldo</button>
+<textarea id="inp" class="bk" placeholder="Pegá acá un respaldo del otro dispositivo" spellcheck="false"></textarea><button id="imp">Unir</button></details>
+</details>
+<p class="priv">Tus postulaciones quedan en este navegador. Si activás la sincronización, se guardan cifradas y solo se leen con tu código. Si activás los avisos con la app cerrada, el servidor guarda solo la hora de cada aviso y un texto cifrado.</p>
+<footer class="foot">Creada por <b>Flor Bagnis</b></footer>
+</main>
+<script>
+var KEY="postulaciones.v1",ESTADOS=["Postulado","Entrevista","Oferta","Sin respuesta","Rechazado"],ETAPAS=["Primera charla (RRHH)","Técnica","Con el equipo","Final","Otra"],RESES=["Pendiente","Pasé a otra etapa","No avancé"],
+data=[],gone={},filtro="Todos",abiertos={},DIAS_SIN_RESP=14;
+function $(i){return document.getElementById(i)}
+/* ---------- datos ---------- */
+function load(){try{var r=localStorage.getItem(KEY);data=r?JSON.parse(r):[];var g=localStorage.getItem(KEY+".del");gone=g?JSON.parse(g):{}}catch(e){data=[];gone={}}
+ if(!Array.isArray(data))data=[];if(!gone||typeof gone!=="object")gone={};data.forEach(function(x){if(!x.mod)x.mod=1})}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));localStorage.setItem(KEY+".del",JSON.stringify(gone))}catch(e){}}
+function iso(d){return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+function hoy(){return iso(new Date())}
+function mas(n){var d=new Date();d.setDate(d.getDate()+n);return iso(d)}
+function fmt(s){var p=s.split("-");return p[2]+"/"+p[1]+"/"+p[0]}
+function activo(x){return x.estado==="Postulado"||x.estado==="Sin respuesta"}
+function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML.replace(/"/g,"&quot;")}
+function fold(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+function nk(s){return String(s||"").toLowerCase().replace(/[^a-z0-9]/g,"")}
+function setEstado(x,e){if(x.estado===e)return;x.hist=(x.hist||[]).concat([[hoy(),e]]);x.estado=e;x.mod=Date.now()}
+var CK="postulaciones.code",RA="https://api.restful-api.dev/objects/",CODE="",busy=false,again=false,timer,PUSH_API=/^https:/.test(location.origin)?location.origin:"",VAPID_PUB="";
+try{CODE=localStorage.getItem(CK)||""}catch(e){}
+function save(){persist();pushSync();if(CODE){clearTimeout(timer);timer=setTimeout(syncNow,800)}}
+function mergeObj(o){var n=0;if(!o||!Array.isArray(o.i))throw 0;
+ Object.keys(o.d||{}).forEach(function(k){if(!gone[k])gone[k]=o.d[k]});
+ o.i.forEach(function(r){if(!r||!r.id||gone[r.id])return;var l=data.filter(function(x){return x.id===r.id})[0];if(!l){data.push(r);n++}else if((r.mod||0)>(l.mod||0)){Object.assign(l,r);n++}});
+ data=data.filter(function(x){return !gone[x.id]});persist();return n}
+function code(){return "PS1."+btoa(unescape(encodeURIComponent(JSON.stringify({i:data,d:gone}))))}
+$("imp").onclick=function(){var t=$("inp").value.trim().replace(/^PS1\./,"");if(!t)return;try{var n=mergeObj(JSON.parse(decodeURIComponent(escape(atob(t)))));$("inp").value="";render();alert(n?"Listo: se actualizaron "+n+" postulaciones.":"Ya estaba todo al día.")}catch(e){alert("Ese código no es válido. Copialo de nuevo, completo.")}};
+$("cp").onclick=function(){var b=$("bk");b.select();try{navigator.clipboard.writeText(b.value).then(function(){alert("Código copiado.")})}catch(e){document.execCommand("copy")}};
+/* ---------- plataformas ---------- */
+var PLATS=["LinkedIn","Indeed","Computrabajo","Bumeran","ZonaJobs","Get on Board","Glassdoor","Workana","Upwork","RemoteOK","We Work Remotely","Wellfound","Jooble","Sitio de la empresa","Referido","Mail directo","Instagram"],
+PDOM={linkedin:"LinkedIn",indeed:"Indeed",computrabajo:"Computrabajo",bumeran:"Bumeran",zonajobs:"ZonaJobs",getonbrd:"Get on Board",glassdoor:"Glassdoor",workana:"Workana",upwork:"Upwork",remoteok:"RemoteOK",weworkremotely:"We Work Remotely",wellfound:"Wellfound",jooble:"Jooble"};
+function inferPlat(l){try{var h=new URL(l).hostname.toLowerCase();for(var k in PDOM)if(h.indexOf(k)>=0)return PDOM[k]}catch(e){}return ""}
+function platName(x){var r=String(x.pla||"").trim()||inferPlat(x.lnk||"");if(!r)return"";var k=nk(r);for(var i=0;i<PLATS.length;i++)if(nk(PLATS[i])===k)return PLATS[i];return r}
+$("plas").innerHTML=PLATS.map(function(p){return '<option value="'+p+'">'}).join("");
+/* ---------- formulario ---------- */
+function resetSeg(){$("dias").value=7;$("segf").value=mas(7);$("segf").min=hoy()}
+$("dias").oninput=function(){var d=parseInt(this.value,10);if(d>=1)$("segf").value=mas(d)};
+$("segf").onchange=function(){if(!this.value)return;var d=Math.round((Date.parse(this.value)-Date.parse(hoy()))/864e5);$("dias").value=d>=1?d:""};
+$("qbus").oninput=render;
+$("f").onsubmit=function(e){e.preventDefault();var d=parseInt($("dias").value,10)||7,lk=$("lnk").value.trim(),sg=$("segf").value,
+ o={id:String(Date.now()),emp:$("emp").value.trim(),pue:$("pue").value.trim(),lnk:lk,pla:$("pla").value.trim()||inferPlat(lk),fec:hoy(),seg:/^\d{4}-\d\d-\d\d$/.test(sg)?sg:mas(d),estado:"Postulado",mod:Date.now(),hist:[]},
+ nt=$("fnota").value.trim(),md=$("fmd").value,su=$("fsue").value.trim(),co=$("fcon").value.trim();
+ if(nt)o.nota=nt;if(md)o.md=md;if(su)o.sue=su;if(co)o.con=co;if($("fcv").checked){o.cvd=true;o.cvf=hoy()}if($("fcvv").checked){o.cvv=true;o.cvvf=hoy()}
+ data.push(o);save();this.reset();resetSeg();$("fmas").open=false;render()};
+/* ---------- lista ---------- */
+function entMs(x){return x.ent?new Date(x.ent).getTime():NaN}
+function cuando(ms){var d=new Date(ms),dd=iso(d);return (dd===hoy()?"hoy":dd===mas(1)?"mañana":fmt(dd))+" a las "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
+function metaHtml(x){var late=activo(x)&&x.seg<=hoy();
+ return '<span>Te postulaste el '+fmt(x.fec)+(platName(x)?' en '+esc(platName(x)):"")+'</span><span class="'+(late?"due":"")+'">Seguimiento: '+fmt(x.seg)+'</span>'
+ +(x.md?'<span>'+esc(x.md)+'</span>':"")+(x.sue?'<span>Sueldo: '+esc(x.sue)+'</span>':"")+(x.con?'<span>Contacto: '+esc(x.con)+'</span>':"")
+ +(x.cvd?'<span>📄 CV descargado</span>':"")+(x.cvv?'<span>👁️ CV visto</span>':"")+(x.estado==="Entrevista"&&x.etapa?'<span>🎤 '+esc(x.etapa)+'</span>':"")}
+function entBlock(x){if(x.estado!=="Entrevista")return"";var m=entMs(x);
+ return '<div class="ent"><label>Fecha y hora de la entrevista<input type="datetime-local" data-f="ent" data-id="'+esc(x.id)+'" value="'+esc(x.ent||"")+'"></label>'+(m==m?'<span class="soon">'+cuando(m)+'</span>':'<span>Poné la fecha para que te avise.</span>')+'</div>'}
+function intBlock(x){if(x.estado!=="Entrevista")return"";var id=esc(x.id);
+ function sel(f,a){return '<select data-f="'+f+'" data-id="'+id+'"><option value="">Sin indicar</option>'+a.map(function(o){return '<option'+(o===x[f]?" selected":"")+'>'+o+'</option>'}).join("")+'</select>'}
+ return '<details class="mas" data-k="'+id+'|e"'+(abiertos[x.id+"|e"]?" open":"")+'><summary>🎤 Entrevista: etapa y documentación</summary><div class="g2"><label>Etapa'+sel("etapa",ETAPAS)+'</label><label>Resultado'+sel("eres",RESES)+'</label>'
+ +'<label class="full">Entrevistador/a<input data-f="entv" data-id="'+id+'" value="'+esc(x.entv||"")+'" placeholder="Nombre y cargo" autocomplete="off"></label>'
+ +'<label class="full">Documentá la entrevista<textarea class="nt" data-f="edoc" data-id="'+id+'" placeholder="Qué te preguntaron, cómo te fue, próximos pasos…">'+esc(x.edoc||"")+'</textarea></label><div class="full"><p class="hint">Grabá un audio de cómo te fue, o dictá y se transcribe solo en el cuadro de arriba.</p><div class="row"><button type="button" data-a="rec" data-id="'+id+'">🎙️ Grabar audio</button><button type="button" data-a="dict" data-id="'+id+'">📝 Dictar y transcribir</button></div><p class="stat" data-as="'+id+'"></p><div data-al="'+id+'"></div></div></div></details>'}
+function extraBlock(x){var id=esc(x.id);
+ return '<details class="mas" data-k="'+id+'"'+(abiertos[x.id]?" open":"")+'><summary>✏️ Editar y anotaciones</summary><div class="g2">'
+ +'<label>Empresa<input data-f="emp" data-id="'+id+'" value="'+esc(x.emp)+'" autocomplete="off"></label>'
+ +'<label>Puesto<input data-f="pue" data-id="'+id+'" value="'+esc(x.pue)+'" autocomplete="off"></label>'
+ +'<label>Dónde te postulaste<input data-f="pla" list="plas" data-id="'+id+'" value="'+esc(x.pla||"")+'" autocomplete="off"></label>'
+ +'<label>Link de la oferta<input type="url" data-f="lnk" data-id="'+id+'" value="'+esc(x.lnk||"")+'" placeholder="https://"></label>'
+ +'<label class="full">Anotaciones<textarea class="nt" data-f="nota" data-id="'+id+'" placeholder="Con quién hablaste, qué te dijeron, qué preparar…">'+esc(x.nota||"")+'</textarea></label>'
+ +'<label>Modalidad<select data-f="md" data-id="'+id+'">'+["","Remoto","Híbrido","Presencial"].map(function(o){return '<option value="'+o+'"'+(o===(x.md||"")?" selected":"")+'>'+(o||"Sin indicar")+'</option>'}).join("")+'</select></label>'
+ +'<label>Sueldo<input data-f="sue" data-id="'+id+'" value="'+esc(x.sue||"")+'" placeholder="Ej: USD 1500" autocomplete="off"></label>'
+ +'<label class="full">Contacto<input data-f="con" data-id="'+id+'" value="'+esc(x.con||"")+'" autocomplete="off"></label></div></details>'}
+function render(){
+ var h=hoy(),venc=data.filter(function(x){return activo(x)&&x.seg<=h}),a=$("alert");
+ a.innerHTML=venc.length?'<div class="alert">'+(venc.length===1?"Tenés 1 seguimiento para hacer hoy.":"Tenés "+venc.length+" seguimientos para hacer hoy.")+'</div>':data.length?'<div class="alert ok">No tenés seguimientos pendientes por hoy.</div>':"";
+ var n=Date.now();a.innerHTML+=data.filter(function(x){var m=entMs(x);return x.estado==="Entrevista"&&m>=n-36e5&&m<=n+48*36e5}).sort(function(p,q){return entMs(p)-entMs(q)}).map(function(x){return '<div class="alert info">🎤 Entrevista con '+esc(x.emp)+' '+cuando(entMs(x))+'</div>'}).join("");
+ var c=$("chips");c.innerHTML="";
+ ["Todos"].concat(ESTADOS,["Favoritas"]).forEach(function(e){var b=document.createElement("button"),k=e==="Todos"?data.length:e==="Favoritas"?data.filter(function(x){return x.fav}).length:data.filter(function(x){return x.estado===e}).length;b.textContent=(e==="Favoritas"?"⭐ ":"")+e+" · "+k;if(e===filtro)b.className="on";b.onclick=function(){filtro=e;render()};c.appendChild(b)});
+ var NUM={};data.slice().sort(function(a,b){return a.id<b.id?-1:1}).forEach(function(x,i){NUM[x.id]=i+1});
+ var qs=fold($("qbus").value.trim()),L=data.filter(function(x){return (filtro==="Todos"||(filtro==="Favoritas"?x.fav:x.estado===filtro))&&(!qs||fold([x.emp,x.pue,platName(x),x.nota,x.con,x.sue,x.md,x.entv,x.edoc,x.etapa].join(" ")).indexOf(qs)>=0)}).sort(function(p,q){return p.seg<q.seg?-1:1}),el=$("list");
+ VIS=L.map(function(x){return x.id});bulk();el.innerHTML=!L.length?'<div class="empty">'+(data.length?"No hay postulaciones que coincidan con el filtro o la búsqueda.":"Todavía no cargaste ninguna. Empezá con el formulario de arriba.")+'</div>'
+ :L.map(function(x){var late=activo(x)&&x.seg<=h,id=esc(x.id);
+  return '<div class="item'+(late?" late":"")+'" data-e="'+esc(x.estado)+'"><div class="top"><div class="hd"><input type="checkbox" class="sc" aria-label="Seleccionar" data-sel="'+id+'"'+(sel[x.id]?" checked":"")+'><div><h2><span class="num">#'+NUM[x.id]+'</span> '+(x.fav?"⭐ ":"")+esc(x.emp)+'</h2><p class="role">'+esc(x.pue)+'</p></div></div>'+(/^https?:\/\//i.test(x.lnk||"")?'<a href="'+esc(x.lnk)+'" target="_blank" rel="noopener">Ver oferta</a>':"")+'</div>'
+  +'<div class="meta" data-id="'+id+'">'+metaHtml(x)+'</div><p class="npv" data-pv="'+id+'"'+(x.nota?"":" hidden")+'>'+esc(x.nota||"")+'</p>'
+  +entBlock(x)+intBlock(x)
+  +(activo(x)?'<div class="ent"><label>Próximo seguimiento<input type="date" data-f="seg" data-id="'+id+'" value="'+esc(x.seg)+'"></label></div>':"")
+  +'<div class="pills"><label class="ck"><input type="checkbox" data-f="cvd" data-id="'+id+'"'+(x.cvd?" checked":"")+'><span>📄 CV descargado</span></label><label class="ck"><input type="checkbox" data-f="cvv" data-id="'+id+'"'+(x.cvv?" checked":"")+'><span>👁️ CV visto</span></label></div>'
+  +extraBlock(x)+'<div class="acts"><select data-id="'+id+'" aria-label="Estado">'+ESTADOS.map(function(e){return '<option'+(e===x.estado?" selected":"")+'>'+e+'</option>'}).join("")+'</select>'
+  +(activo(x)?'<button class="main" data-act="avance" data-id="'+id+'">🎤 Avancé a entrevista</button><button data-act="hecho" data-id="'+id+'">Ya hice seguimiento</button>':"")
+  +'<button data-act="fav" data-id="'+id+'">'+(x.fav?"Quitar ⭐":"⭐ Favorita")+'</button><button data-act="del" data-id="'+id+'">Borrar</button></div></div>'}).join("");
+ $("bk").value=code();stats();loadAudios()}
+$("chips").addEventListener("wheel",function(e){var c=this;if(c.scrollWidth>c.clientWidth&&Math.abs(e.deltaY)>Math.abs(e.deltaX)){c.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+$("list").addEventListener("toggle",function(e){var d=e.target;if(d.classList&&d.classList.contains("mas")){var k=d.dataset.k;if(d.open)abiertos[k]=1;else delete abiertos[k]}},true);
+$("list").onchange=function(e){var t=e.target,id=t.dataset.id,f=t.dataset.f;if(t.dataset.sel){if(t.checked)sel[t.dataset.sel]=1;else delete sel[t.dataset.sel];bulk();return}if(!id)return;
+ var x=data.filter(function(y){return y.id===id})[0];if(!x)return;
+ if(!f){setEstado(x,t.value);save();render();return}
+ var v=t.type==="checkbox"?t.checked:t.value.trim();
+ if((f==="emp"||f==="pue")&&!v){t.value=x[f];return}
+ if(f==="seg"){if(!/^\d{4}-\d\d-\d\d$/.test(t.value)){t.value=x.seg;return}x.seg=t.value}
+ else{x[f]=v;if(f==="cvd")x.cvf=v?hoy():"";if(f==="cvv")x.cvvf=v?hoy():""}
+ x.mod=Date.now();save();
+ if(/^(seg|emp|pue|lnk|pla|ent)$/.test(f)){render();return}
+ [].forEach.call(document.querySelectorAll(".meta"),function(m){if(m.dataset.id===id)m.innerHTML=metaHtml(x)});
+ if(f==="nota")[].forEach.call(document.querySelectorAll(".npv"),function(p){if(p.dataset.pv===id){p.textContent=v;p.hidden=!v}});
+ $("bk").value=code();stats()};
+$("list").onclick=function(e){var b=e.target.closest("button");if(!b)return;if(b.dataset.a){audioAct(b);return}var id=b.dataset.id,a=b.dataset.act,x=data.filter(function(y){return y.id===id})[0];if(!x)return;
+ if(a==="del"&&confirm("¿Borrar esta postulación?")){gone[id]=Date.now();delRemote([id]);data=data.filter(function(y){return y.id!==id});apurge([id]);save();render()}
+ if(a==="hecho"){var r=prompt("¿En cuántos días hacés el próximo seguimiento?","7");if(r===null)return;var d=parseInt(r,10);if(!(d>=1))d=7;x.seg=mas(d);x.mod=Date.now();save();render()}
+ if(a==="fav"){x.fav=!x.fav;x.mod=Date.now();save();render()}
+ if(a==="avance"){setEstado(x,"Entrevista");abiertos[id+"|e"]=1;save();render()}};
+function autoSin(){var h=hoy(),ch=0;data.forEach(function(x){if(x.estado==="Postulado"&&Math.floor((Date.parse(h)-Date.parse(x.fec))/864e5)>=DIAS_SIN_RESP){setEstado(x,"Sin respuesta");ch++}});if(ch)save()}
+/* ---------- selección y acciones en lote ---------- */
+var sel={},VIS=[];
+function rer(){var s0=$("list").scrollTop;render();$("list").scrollTop=s0}
+function bulk(){var b=$("bulk");Object.keys(sel).forEach(function(k){if(!data.some(function(x){return x.id===k}))delete sel[k]});
+ var ns=Object.keys(sel).length,all=VIS.length&&VIS.every(function(k){return sel[k]});
+ b.innerHTML='<span>Mostrando <b>'+VIS.length+'</b> de <b>'+data.length+'</b> postulaciones</span>'+(VIS.length?'<label class="ck" style="align-self:flex-start"><input type="checkbox" id="selall"'+(all?" checked":"")+'><span>Seleccionar todas las que ves</span></label>':"")
+ +(ns?'<div class="row"><span><b>'+ns+'</b> seleccionada'+(ns===1?"":"s")+'</span><select id="bst" aria-label="Cambiar estado"><option value="">Cambiar estado a…</option>'+ESTADOS.map(function(e){return '<option>'+e+'</option>'}).join("")+'</select><button data-b="cvv">👁️ CV visto</button><button data-b="cvd">📄 CV descargado</button><button data-b="del">Borrar seleccionadas</button><button data-b="no">Quitar selección</button></div>':"")}
+$("bulk").onchange=function(e){var t=e.target;
+ if(t.id==="selall"){VIS.forEach(function(k){if(t.checked)sel[k]=1;else delete sel[k]});rer();return}
+ if(t.id==="bst"&&t.value){var v=t.value,ids=Object.keys(sel);if(!ids.length)return;if(!confirm("¿Pasar "+ids.length+" postulaciones a «"+v+"»?")){t.value="";return}
+  data.forEach(function(x){if(sel[x.id])setEstado(x,v)});save();rer()}};
+$("bulk").onclick=function(e){var b=e.target.closest("button"),a=b&&b.dataset.b;if(!a)return;var ids=Object.keys(sel);
+ if(a==="no"){sel={};rer();return}if(!ids.length)return;
+ if(a==="del"){if(!confirm("¿Borrar "+ids.length+(ids.length===1?" postulación?":" postulaciones? No se puede deshacer.")))return;
+  delRemote(ids);ids.forEach(function(k){gone[k]=Date.now()});data=data.filter(function(x){return !gone[x.id]});apurge(ids);sel={};save();rer();return}
+ var df=a==="cvd"?"cvf":"cvvf";data.forEach(function(x){if(sel[x.id]){x[a]=true;x[df]=x[df]||hoy();x.mod=Date.now()}});save();rer()};
+/* ---------- audios y dictado ---------- */
+var REC=null,DICT=null;
+function adb(){return new Promise(function(ok,no){var q=indexedDB.open("bitacora-audio",1);q.onupgradeneeded=function(){q.result.createObjectStore("a",{keyPath:"k"})};q.onsuccess=function(){ok(q.result)};q.onerror=function(){no(q.error)}})}
+async function aput(r){var d=await adb();return new Promise(function(ok,no){var t=d.transaction("a","readwrite");t.objectStore("a").put(r);t.oncomplete=ok;t.onerror=function(){no(t.error)}})}
+async function adel(k){var d=await adb();return new Promise(function(ok){var t=d.transaction("a","readwrite");t.objectStore("a").delete(k);t.oncomplete=ok;t.onerror=ok})}
+async function alist(){var d=await adb();return new Promise(function(ok){var out=[],q=d.transaction("a").objectStore("a").openCursor();q.onsuccess=function(){var c=q.result;if(c){out.push(c.value);c.continue()}else ok(out)};q.onerror=function(){ok(out)}})}
+async function apurge(ids){try{var L=await alist();for(var i=0;i<L.length;i++)if(ids.indexOf(L[i].pid)>=0)await adel(L[i].k)}catch(e){}}
+function ashow(pid,t){[].forEach.call(document.querySelectorAll("[data-as]"),function(el){if(el.dataset.as===pid)el.textContent=t})}
+function setRecUi(){[].forEach.call(document.querySelectorAll('button[data-a="rec"]'),function(b){var on=REC&&REC.pid===b.dataset.id;b.textContent=on?"⏹️ Detener y guardar":"🎙️ Grabar audio";b.classList.toggle("live",!!on)});
+ [].forEach.call(document.querySelectorAll('button[data-a="dict"]'),function(b){var on=DICT&&DICT.pid===b.dataset.id;b.textContent=on?"⏹️ Terminar dictado":"📝 Dictar y transcribir";b.classList.toggle("live",!!on)})}
+async function aget(k){var d=await adb();return new Promise(function(ok){var q=d.transaction("a").objectStore("a").get(k);q.onsuccess=function(){ok(q.result||null)};q.onerror=function(){ok(null)}})}
+function blobB64(b){return new Promise(function(ok){var r=new FileReader();r.onload=function(){ok(r.result.split(",")[1])};r.readAsDataURL(b)})}
+function delRemote(ids){if(!CODE)return;data.forEach(function(x){if(ids.indexOf(x.id)>=0)(x.aud||[]).forEach(function(a){if(a.oid)rq("DELETE",a.oid).catch(function(){})})})}
+async function syncAudio(k){var up=0,dn=0,fail=0;
+ for(var i=0;i<data.length;i++){var x=data[i],A=x.aud||[];
+  for(var j=0;j<A.length;j++){var a=A[j],r=null;try{r=await aget(a.k)}catch(e){}
+   try{
+    if(r&&!a.oid){var o=await(await rq("POST","",JSON.stringify({name:"audio",data:await enc({t:r.blob.type,b:await blobB64(r.blob)},k)}))).json();if(o&&o.id){a.oid=o.id;x.mod=Date.now();up++}}
+    else if(!r&&a.oid){var o2=await(await rq("GET",a.oid)).json(),p=await dec(o2.data,k);await aput({k:a.k,pid:x.id,ts:a.ts,blob:new Blob([s2b(p.b)],{type:p.t}),dur:a.dur,ext:a.ext,m:1});dn++}
+   }catch(e){fail++}}}
+ if(up)persist();return{up:up,dn:dn,fail:fail}}
+async function loadAudios(){if(!document.querySelector("[data-al]"))return;var L=[],M={};try{L=await alist()}catch(e){}L.forEach(function(r){M[r.k]=r});
+ var mg=false;L.forEach(function(r){var x=data.filter(function(y){return y.id===r.pid})[0];if(!x)return;var has=(x.aud||[]).some(function(a){return a.k===r.k});
+  if(!has){if(r.m){if(Date.now()-r.ts>6e4){adel(r.k);delete M[r.k]}}else{x.aud=(x.aud||[]).concat([{k:r.k,ts:r.ts,dur:r.dur,ext:r.ext}]);x.mod=Date.now();mg=true;aput(Object.assign({},r,{m:1}))}}});
+ if(mg)save();
+ [].forEach.call(document.querySelectorAll("[data-al]"),function(el){var pid=el.dataset.al,x=data.filter(function(y){return y.id===pid})[0],A=((x&&x.aud)||[]).slice().sort(function(a,b){return a.ts-b.ts});
+  el.innerHTML=A.map(function(a){var r=M[a.k],cl=a.oid?"☁️ sincronizado":CODE?"⏳ pendiente de subir":"solo en este dispositivo",d=a.dur?' · '+Math.round(a.dur)+' s':'',bt='<button type="button" data-a="adel" data-k="'+esc(a.k)+'" data-id="'+esc(pid)+'">Borrar</button>';
+   if(!r)return '<div class="au"><span>🎙️ '+esc(abs(a.ts))+d+' · ⏳ descargando…</span>'+bt+'</div>';
+   var u=URL.createObjectURL(r.blob);return '<div class="au"><span>🎙️ '+esc(abs(a.ts))+d+' · '+cl+'</span><audio controls preload="none" src="'+u+'"></audio><a href="'+u+'" download="entrevista-'+esc(pid)+'-'+a.ts+'.'+(a.ext||"webm")+'">Descargar</a>'+bt+'</div>'}).join("")});
+ setRecUi()}
+async function audioAct(b){var a=b.dataset.a,id=b.dataset.id;
+ if(a==="adel"){if(confirm("¿Borrar este audio? Se borra también de tus otros dispositivos.")){var xa=data.filter(function(y){return y.id===id})[0];if(xa){(xa.aud||[]).forEach(function(q){if(q.k===b.dataset.k&&q.oid&&CODE)rq("DELETE",q.oid).catch(function(){})});xa.aud=(xa.aud||[]).filter(function(q){return q.k!==b.dataset.k});xa.mod=Date.now();save()}try{await adel(b.dataset.k)}catch(e){}loadAudios()}return}
+ if(a==="rec"){if(REC)REC.mr.stop();else startRec(id);return}
+ if(a==="dict"){if(DICT)DICT.stop();else startDict(id)}}
+async function startRec(pid){if(!navigator.mediaDevices||!window.MediaRecorder){ashow(pid,"Este navegador no permite grabar audio.");return}
+ try{var s=await navigator.mediaDevices.getUserMedia({audio:true}),mt=["audio/webm;codecs=opus","audio/mp4","audio/webm"].filter(function(t){return MediaRecorder.isTypeSupported(t)})[0]||"",mr=new MediaRecorder(s,mt?{mimeType:mt,audioBitsPerSecond:24000}:{audioBitsPerSecond:24000}),ch=[],t0=Date.now();
+  mr.ondataavailable=function(e){if(e.data&&e.data.size)ch.push(e.data)};
+  mr.onstop=async function(){s.getTracks().forEach(function(t){t.stop()});var type=mr.mimeType||mt||"audio/webm",blob=new Blob(ch,{type:type});REC=null;
+   try{await aput({k:pid+"|"+t0,pid:pid,ts:t0,blob:blob,dur:(Date.now()-t0)/1000,ext:/mp4/.test(type)?"m4a":"webm",m:1});var xx=data.filter(function(y){return y.id===pid})[0];if(xx){xx.aud=(xx.aud||[]).concat([{k:pid+"|"+t0,ts:t0,dur:(Date.now()-t0)/1000,ext:/mp4/.test(type)?"m4a":"webm"}]);xx.mod=Date.now();save()}ashow(pid,CODE?"Audio guardado. Se está sincronizando.":"Audio guardado en este dispositivo.")}catch(e){ashow(pid,"No pude guardar el audio.")}loadAudios()};
+  mr.start();REC={pid:pid,mr:mr};setTimeout(function(){if(REC&&REC.mr===mr)mr.stop()},180000);setRecUi();ashow(pid,"Grabando (máx. 3 min)… tocá «Detener y guardar» cuando termines.")}
+ catch(e){ashow(pid,"No pude acceder al micrófono. Revisá el permiso del navegador (hace falta https).")}}
+function startDict(pid){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){ashow(pid,"Este navegador no permite dictado. Probá con Chrome o Safari.");return}
+ var x=data.filter(function(y){return y.id===pid})[0];if(!x)return;var r=new SR();r.lang="es-AR";r.continuous=true;r.interimResults=true;
+ var base=x.edoc?x.edoc.trim()+"\n":"",fin="";
+ function ta(){return document.querySelector('textarea[data-f="edoc"][data-id="'+pid+'"]')}
+ r.onresult=function(e){var im="";for(var i=e.resultIndex;i<e.results.length;i++){var t=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=t.trim()+" ";else im+=t}
+  x.edoc=base+fin;var el=ta();if(el)el.value=base+fin+im};
+ r.onerror=function(e){ashow(pid,e.error==="not-allowed"?"Permiso de micrófono denegado.":"El dictado se detuvo ("+e.error+").")};
+ r.onend=function(){x.edoc=(base+fin).trim();x.mod=Date.now();DICT=null;save();var el=ta();if(el)el.value=x.edoc;setRecUi();ashow(pid,"Dictado guardado en la documentación.")};
+ try{r.start();DICT={pid:pid,stop:function(){r.stop()}};setRecUi();ashow(pid,"Escuchando… hablá y se escribe solo. Tocá de nuevo para terminar.")}catch(e){ashow(pid,"No pude iniciar el dictado.")}}
+/* ---------- estadísticas ---------- */
+function bars(rows,mx){return rows.map(function(r){return '<div class="bar"><span title="'+esc(r.l)+'">'+esc(r.l)+'</span><div class="trk"><i style="width:'+Math.round(r.v*100/mx)+'%;background:'+r.col+'"></i></div><b>'+r.v+'</b></div>'}).join("")}
+function donut(c,n){var CO={"Postulado":"#6b7f99","Entrevista":"#0f9d7a","Oferta":"#e0a526","Sin respuesta":"#9aa3a0","Rechazado":"#d9532b"},R=52,L=2*Math.PI*R,off=0,av=c.Entrevista+c.Oferta;
+ var arcs=ESTADOS.map(function(e){if(!c[e])return"";var len=c[e]/n*L,t='<circle cx="70" cy="70" r="'+R+'" fill="none" stroke="'+CO[e]+'" stroke-width="22" stroke-dasharray="'+len+' '+(L-len)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 70 70)"><title>'+e+': '+c[e]+'</title></circle>';off+=len;return t}).join("");
+ return '<div class="dn"><svg viewBox="0 0 140 140" role="img" aria-label="Estado de tus postulaciones"><circle cx="70" cy="70" r="52" fill="none" stroke="var(--line)" stroke-width="22"/>'+arcs+'<text x="70" y="68" text-anchor="middle" font-size="26" font-weight="800" fill="var(--ink)">'+n+'</text><text x="70" y="86" text-anchor="middle" font-size="10" fill="var(--mute)">postulaciones</text></svg>'
+ +'<div class="lg">'+ESTADOS.map(function(e){return '<div><i style="background:'+CO[e]+'"></i>'+e+'<b>'+c[e]+' ('+Math.round(c[e]*100/n)+'%)</b></div>'}).join("")+'<p class="plat"><b>'+Math.round(av*100/n)+'%</b> avanzó a entrevista u oferta</p></div></div>'}
+function stats(){var el=$("estb"),n=data.length;
+ if(!n){el.innerHTML='<p>Cuando cargues postulaciones vas a ver acá cómo te va: cuántas respondieron, cuántas avanzan y cuántas nunca contestaron.</p>';return}
+ var c={};ESTADOS.forEach(function(e){c[e]=0});data.forEach(function(x){if(c[x.estado]!=null)c[x.estado]++});
+ var resp=c.Entrevista+c.Oferta+c.Rechazado,av=c.Entrevista+c.Oferta;
+ function pc(v){return Math.round(v*100/n)+"%"}
+ function kpi(t,v,s){return '<div class="kpi"><span>'+t+'</span><b>'+v+'</b><span>'+s+'</span></div>'}
+ var cvd=data.filter(function(x){return x.cvd}).length,cvv=data.filter(function(x){return x.cvv}).length,
+ col={"Postulado":"var(--mute)","Entrevista":"var(--acc)","Oferta":"var(--acc)","Sin respuesta":"var(--mute)","Rechazado":"var(--bad)"};
+ var h='<div class="est">'+kpi("Postulaciones",n,"en total")+kpi("Respondieron",resp,pc(resp)+" (incluye rechazos)")+kpi("Avanzás",av,pc(av)+" con entrevista u oferta")+kpi("Sin respuesta",c["Sin respuesta"],pc(c["Sin respuesta"])+" nunca contestaron")+kpi("CV descargado",cvd,pc(cvd)+" lo descargó la empresa")+kpi("CV visto",cvv,pc(cvv)+" lo vio la empresa")+'</div>';
+ h+='<p class="est-h">Cómo van tus postulaciones</p>'+donut(c,n);h+='<p class="est-h">Estado de cada postulación</p>'+bars(ESTADOS.map(function(e){return{l:e,v:c[e],col:col[e]}}),Math.max.apply(null,ESTADOS.map(function(e){return c[e]}))||1);
+ var P={},PK=[];data.forEach(function(x){var p=platName(x)||"Sin indicar",k=nk(p)||"sinindicar";if(!P[k]){P[k]={n:p,t:0,a:0};PK.push(k)}P[k].t++;if(x.estado==="Entrevista"||x.estado==="Oferta")P[k].a++});
+ PK.sort(function(a,b){return P[b].t-P[a].t||P[b].a-P[a].a});
+ h+='<p class="est-h">Dónde te postulaste</p>'+bars(PK.slice(0,8).map(function(k){return{l:P[k].n,v:P[k].t,col:"var(--acc)"}}),P[PK[0]].t);
+ var real=PK.filter(function(k){return k!=="sinindicar"});
+ if(real.length){h+='<p class="plat">Donde más te postulaste: <b>'+esc(P[real[0]].n)+'</b> ('+P[real[0]].t+' de '+n+').</p>';
+  var bk=real.slice().sort(function(a,b){return P[b].a-P[a].a||(P[b].a/P[b].t)-(P[a].a/P[a].t)})[0];
+  if(P[bk].a>0)h+='<p class="plat">Donde más avanzaste: <b>'+esc(P[bk].n)+'</b> ('+P[bk].a+' de '+P[bk].t+' con entrevista u oferta).</p>'}
+ var hy=hoy(),W=[0,0,0,0,0,0,0,0];data.forEach(function(x){var d=Math.floor((Date.parse(hy)-Date.parse(x.fec))/864e5);if(d>=0&&Math.floor(d/7)<8)W[Math.floor(d/7)]++});
+ var wm=Math.max.apply(null,W)||1;
+ h+='<p class="est-h">Postulaciones por semana (últimas 8)</p><div class="wk">'+W.map(function(v,k){return [k,v]}).reverse().map(function(p){return '<div title="'+p[1]+' postulaciones"><b>'+p[1]+'</b><i style="height:'+Math.round(p[1]*80/wm)+'px"></i><span>'+fmt(mas(-(p[0]*7+6))).slice(0,5)+'</span></div>'}).join("")+'</div>';
+ /* entrevistas y análisis con historial */
+ var now=Date.now(),E=data.filter(function(x){return x.estado==="Entrevista"}),done=E.filter(function(x){var m=entMs(x);return m==m&&m<now}).length,next=E.filter(function(x){var m=entMs(x);return m==m&&m>=now}).length,
+ isAv=function(x){return x.estado==="Entrevista"||x.estado==="Oferta"},cvA=data.filter(function(x){return x.cvd}),L=[],R={},ET={};
+ data.forEach(function(x){if(x.eres)R[x.eres]=(R[x.eres]||0)+1;if(x.etapa&&x.estado==="Entrevista")ET[x.etapa]=(ET[x.etapa]||0)+1});
+ var le=data.filter(function(x){return isAv(x)||(x.hist||[]).some(function(q){return q[1]==="Entrevista"||q[1]==="Oferta"})}).length;
+ L.push("Entrevistas en curso: "+E.length+" (realizadas: "+done+" · próximas: "+next+" · sin fecha: "+(E.length-done-next)+")");
+ L.push("Llegaron a entrevista alguna vez: "+le+" de "+n+" ("+pc(le)+")");
+ var T=[];data.forEach(function(x){var f=(x.hist||[]).filter(function(q){return q[1]!=="Sin respuesta"})[0];if(f){var d=Math.round((Date.parse(f[0])-Date.parse(x.fec))/864e5);if(d>=0)T.push(d)}});
+ if(T.length)L.push("Días promedio hasta la primera respuesta: "+Math.round(T.reduce(function(a,b){return a+b},0)/T.length));
+ if(cvA.length)L.push("De las que descargaron tu CV, avanzaron: "+cvA.filter(isAv).length+" de "+cvA.length);
+ if(Object.keys(R).length)L.push("Resultado de las entrevistas: "+Object.keys(R).map(function(k){return k+": "+R[k]}).join(" · "));
+ h+='<p class="est-h">Entrevistas y análisis</p>'+L.map(function(t){return '<p class="plat">'+esc(t)+'</p>'}).join("");
+ var et=ETAPAS.filter(function(e){return ET[e]}).map(function(e){return{l:e,v:ET[e],col:"var(--acc)"}});
+ if(et.length)h+='<p class="est-h">Entrevistas por etapa</p>'+bars(et,Math.max.apply(null,et.map(function(r){return r.v})));
+ h+='<p class="est-h">Exportar estadísticas como imagen</p><div class="row"><button data-x="rosa">Modo claro</button><button data-x="verde">Modo verde</button><button data-x="negro">Modo negro</button></div><p class="est-h">Exportar informe completo en PDF</p><p class="plat">Incluye las estadísticas y el detalle de cada postulación con sus anotaciones.</p><div class="row"><button class="main" data-pdf="1">📄 Descargar PDF</button></div><p class="plat" id="xmsg"></p><p class="priv">Las postulaciones sin novedades por '+DIAS_SIN_RESP+' días pasan solas a «Sin respuesta». El historial de estados se registra desde ahora.</p>';
+ el.innerHTML=h}
+/* ---------- avisos ---------- */
+var ANT=[10080,4320,2880,1440,120,60,30,15];
+function AVS(){try{var v=JSON.parse(localStorage.getItem("postulaciones.antes")||"null");if(Array.isArray(v))return v.sort(function(a,b){return b-a})}catch(e){}return [1440,60]}
+function antLbl(m){if(m%1440===0){var d=m/1440;return d===1?"1 día antes":d===7?"1 semana antes":d+" días antes"}if(m%60===0)return m/60===1?"1 hora antes":m/60+" horas antes";return m+" minutos antes"}
+function antTxt(m){if(m%1440===0){var d=m/1440;return d===1?"mañana":"en "+d+" días"}if(m%60===0)return m/60===1?"en 1 hora":"en "+m/60+" horas";return "en "+m+" minutos"}
+function antTrig(m){return m%1440===0?"-P"+m/1440+"D":"-PT"+m+"M"}
+(function(){var s=AVS();$("antes").innerHTML=ANT.map(function(m){return '<label class="ck"><input type="checkbox" data-min="'+m+'"'+(s.indexOf(m)>=0?" checked":"")+'><span>'+antLbl(m)+'</span></label>'}).join("")})();
+$("antes").onchange=function(){var v=[];[].forEach.call(document.querySelectorAll("#antes input"),function(c){if(c.checked)v.push(+c.dataset.min)});try{localStorage.setItem("postulaciones.antes",JSON.stringify(v))}catch(e){}avisar();$("avs").textContent="Guardado. Si ya agregaste entrevistas al calendario, volvé a tocar «Agregar al calendario»."};
+function MAIL(){try{return localStorage.getItem("postulaciones.mail")||""}catch(e){return""}}
+$("mail").value=MAIL();
+$("mg").onclick=function(){var v=$("mail").value.trim();if(v&&!/^\S+@\S+\.\S+$/.test(v)){$("avs").textContent="Ese mail no parece válido.";return}try{v?localStorage.setItem("postulaciones.mail",v):localStorage.removeItem("postulaciones.mail")}catch(e){}$("avs").textContent=v?"Mail guardado.":"Mail borrado."};
+function ics(t){return String(t).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n")}
+function stamp(d){return d.toISOString().replace(/[-:]/g,"").replace(/\.\d+/,"")}
+function makeIcs(){var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Bitacora Jobs//ES","CALSCALE:GREGORIAN"],h=hoy(),n=0,M=MAIL();
+ function al(t,d){L.push("BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+ics(d),"TRIGGER:"+t,"END:VALARM");if(M)L.push("BEGIN:VALARM","ACTION:EMAIL","SUMMARY:"+ics(d),"DESCRIPTION:"+ics(d),"ATTENDEE:mailto:"+M,"TRIGGER:"+t,"END:VALARM")}
+ data.forEach(function(x){var uid=String(x.id).replace(/[^\w-]/g,""),sq=Math.floor((x.mod||0)/1000);
+  if(activo(x)){n++;L.push("BEGIN:VEVENT","UID:post-"+uid+"@bitacora","DTSTAMP:"+stamp(new Date()),"SEQUENCE:"+sq,"DTSTART:"+(x.seg<h?h:x.seg).replace(/-/g,"")+"T090000","DURATION:PT15M","SUMMARY:"+ics("Seguimiento: "+x.emp+" ("+x.pue+")"),"DESCRIPTION:"+ics("Escribile a "+x.emp+" para preguntar cómo sigue tu postulación."));al("PT0M","Seguimiento: "+x.emp);L.push("END:VEVENT")}
+  var m=entMs(x);if(x.estado==="Entrevista"&&m==m&&m>Date.now()){n++;L.push("BEGIN:VEVENT","UID:ent-"+uid+"@bitacora","DTSTAMP:"+stamp(new Date()),"SEQUENCE:"+sq,"DTSTART:"+stamp(new Date(m)),"DURATION:PT1H","SUMMARY:"+ics("Entrevista: "+x.emp+" ("+x.pue+")"),"DESCRIPTION:"+ics(x.lnk||"Entrevista"));AVS().forEach(function(mn){al(antTrig(mn),"Entrevista "+antTxt(mn)+": "+x.emp)});L.push("END:VEVENT")}});
+ L.push("END:VCALENDAR");return{n:n,text:L.join("\r\n")}}
+$("ical").onclick=function(){var r=makeIcs();if(!r.n){$("avs").textContent="No tenés postulaciones activas para agendar.";return}
+ var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([r.text],{type:"text/calendar"}));a.download="seguimientos.ics";document.body.appendChild(a);a.click();a.remove();
+ $("avs").textContent="Abrí el archivo seguimientos.ics para agregar "+r.n+(r.n===1?" aviso":" avisos")+" a tu calendario."};
+function notif(t,b){try{new Notification(t,{body:b})}catch(e){try{navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b})})}catch(_){}}}
+function avisar(){if(!("Notification" in window)||Notification.permission!=="granted")return;var h=hoy(),n=Date.now(),S={};try{S=JSON.parse(localStorage.getItem("postulaciones.nt2")||"{}")}catch(e){}
+ var v=data.filter(function(x){return activo(x)&&x.seg<=h});
+ if(v.length&&S.seg!==h){S.seg=h;notif("Seguimientos pendientes",v.length===1?"Hoy toca hacer seguimiento a "+v[0].emp+".":"Tenés "+v.length+" seguimientos para hacer hoy.")}
+ var A=AVS().slice().sort(function(a,b){return a-b});
+ data.forEach(function(x){var m=entMs(x);if(x.estado!=="Entrevista"||m!==m||m<n)return;A.forEach(function(mn,i){var k=x.id+"|"+x.ent+"|"+mn,lo=i?A[i-1]*6e4:0;if(m-n<=mn*6e4&&m-n>lo&&!S[k]){S[k]=1;notif("Entrevista "+antTxt(mn),x.emp+" · "+cuando(m))}})});
+ try{localStorage.setItem("postulaciones.nt2",JSON.stringify(S))}catch(e){}}
+$("noti").onclick=function(){if(!("Notification" in window)){$("avs").textContent="Este navegador no permite avisos. Usá el calendario.";return}
+ try{Notification.requestPermission().then(function(p){$("avs").textContent=p==="granted"?"Listo: te aviso mientras la página esté abierta. Con la página cerrada, usá el calendario.":"Avisos bloqueados. Habilitalos en los ajustes del navegador.";avisar()})}catch(e){$("avs").textContent="No se pudieron activar los avisos acá."}};
+$("mm").onclick=function(){var m=MAIL(),h=hoy(),n=Date.now(),L=[];if(!m){$("avs").textContent="Primero guardá tu mail.";return}
+ data.filter(function(x){return x.estado==="Entrevista"&&entMs(x)>=n}).forEach(function(x){L.push("Entrevista: "+x.emp+" ("+x.pue+") - "+cuando(entMs(x)))});
+ data.filter(activo).sort(function(a,b){return a.seg<b.seg?-1:1}).forEach(function(x){L.push("Seguimiento: "+x.emp+" ("+x.pue+") - "+(x.seg<=h?"pendiente":fmt(x.seg)))});
+ if(!L.length){$("avs").textContent="No hay nada para resumir todavía.";return}
+ location.href="mailto:"+encodeURIComponent(m)+"?subject="+encodeURIComponent("Bitácora Jobs: resumen")+"&body="+encodeURIComponent(L.join("\n"))};
+/* ---------- cifrado y sincronización ---------- */
+function b2s(u){var s="";for(var i=0;i<u.length;i++)s+=String.fromCharCode(u[i]);return btoa(s)}
+function s2b(s){var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+function k2s(u){return b2s(u).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function s2k(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return s2b(s)}
+async function ckey(k,use){return crypto.subtle.importKey("raw",s2k(k),"AES-GCM",false,[use])}
+async function enc(obj,k){var iv=crypto.getRandomValues(new Uint8Array(12));var ct=await crypto.subtle.encrypt({name:"AES-GCM",iv:iv},await ckey(k,"encrypt"),new TextEncoder().encode(JSON.stringify(obj)));return{v:1,iv:b2s(iv),ct:b2s(new Uint8Array(ct))}}
+async function dec(p,k){var pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:s2b(p.iv)},await ckey(k,"decrypt"),s2b(p.ct));return JSON.parse(new TextDecoder().decode(pt))}
+async function rq(m,id,body){var r=await fetch(RA+(id||""),{method:m,headers:{"Content-Type":"application/json"},body:body});if(!r.ok)throw r.status;return r}
+function st(t){$("st").textContent=t}
+function why(e){return e===404?"el código ya no existe en el servidor":typeof e==="number"?"error "+e:"sin conexión o cifrado no disponible (abrí la app desde https)"}
+function norm(i,d){return JSON.stringify([(i||[]).slice().sort(function(a,b){return a.id<b.id?-1:1}),Object.keys(d||{}).sort()])}
+function showCode(){$("off").hidden=!!CODE;$("on").hidden=!CODE;$("cv").textContent=CODE}
+function setCode(c){CODE=c;try{c?localStorage.setItem(CK,c):localStorage.removeItem(CK)}catch(e){}showCode()}
+async function syncNow(){if(!CODE)return;if(busy){again=true;return}busy=true;var au={up:0,dn:0,fail:0};
+ try{var p=CODE.split("."),id=p[0],k=p[1],o=await(await rq("GET",id)).json(),remote=await dec(o.data,k),ch=mergeObj(remote),ae=document.activeElement;
+  if(ch&&!(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName)))render();pushSync();
+  au=await syncAudio(k);if(au.dn)loadAudios();
+  if(norm(data,gone)!==norm(remote.i,remote.d)){var body=await enc({i:data,d:gone},k);await rq("PUT",id,JSON.stringify({name:"postulaciones",data:body}))}
+  st(au.fail?"☁️ Sincronizado, pero "+au.fail+(au.fail===1?" audio no se pudo":" audios no se pudieron")+" subir o bajar. Se reintenta solo.":"☁️ Sincronizado"+(au.up||au.dn?" (audios: "+au.up+" subidos, "+au.dn+" bajados)":""))}catch(e){st("☁️ Sin sincronizar ("+why(e)+"). Tus cambios quedan acá y se reintentan.")}
+ busy=false;if(again){again=false;syncNow()}}
+$("mk").onclick=async function(){st("Creando código…");
+ try{var k=k2s(crypto.getRandomValues(new Uint8Array(16))),body=await enc({i:data,d:gone},k),o=await(await rq("POST","",JSON.stringify({name:"postulaciones",data:body}))).json();if(!o||!o.id)throw 0;setCode(o.id+"."+k);st("☁️ Listo. Escribí este código en tu otro dispositivo.")}
+ catch(e){st("No se pudo crear el código ("+why(e)+"). Subí la página a un hosting con https.")}};
+$("cn").onclick=async function(){var c=$("ci").value.trim();if(!/^[\w-]{6,64}\.[\w-]{16,32}$/.test(c)){st("Ese código no parece válido.");return}st("Conectando…");
+ try{var p=c.split("."),o=await(await rq("GET",p[0])).json(),remote=await dec(o.data,p[1]);setCode(c);mergeObj(remote);render();$("ci").value="";await syncNow()}
+ catch(e){st(e===404?"No encontré ese código. Revisá que esté completo.":"No pude conectar ("+why(e)+").")}};
+$("cc").onclick=function(){try{navigator.clipboard.writeText(CODE).then(function(){st("Código copiado.")})}catch(e){st("Copiá el código a mano.")}};
+$("cd").onclick=function(){setCode("");st("📴 Desconectado: tus datos siguen en este dispositivo.")};
+/* ---------- avisos con la app cerrada ---------- */
+function MAV(){try{return localStorage.getItem("postulaciones.mavisos")==="1"}catch(e){return false}}
+function SRV(){try{return localStorage.getItem("postulaciones.srv")||""}catch(e){return""}}
+function SID(){try{var v=localStorage.getItem("postulaciones.sid");if(!v){v=k2s(crypto.getRandomValues(new Uint8Array(16)));localStorage.setItem("postulaciones.sid",v)}return v}catch(e){return""}}
+function pst(t){$("pst").textContent=t}
+function abs(m){var d=new Date(m);return fmt(iso(d))+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
+function recordatorios(){var n=Date.now(),L=[],v=6*36e5;
+ data.forEach(function(x){if(activo(x)){var f=new Date(x.seg+"T09:00:00").getTime();if(f>n-v)L.push({k:x.id+"|"+x.seg+"|s",at:f,t:"Seguimiento: "+x.emp,b:"Hoy toca escribirle a "+x.emp+" por "+x.pue+"."})}
+  var m=entMs(x);if(x.estado==="Entrevista"&&m==m)AVS().forEach(function(mn){if(m-mn*6e4>n-v)L.push({k:x.id+"|"+x.ent+"|"+mn,at:m-mn*6e4,t:"Entrevista "+antTxt(mn)+": "+x.emp,b:x.pue+" · "+abs(m)})})});return L}
+function idbOpen(){return new Promise(function(ok,no){var q=indexedDB.open("postulaciones-sw",1);q.onupgradeneeded=function(){q.result.createObjectStore("kv")};q.onsuccess=function(){ok(q.result)};q.onerror=function(){no(q.error)}})}
+async function devKey(){var d=await idbOpen(),k=await new Promise(function(ok){var q=d.transaction("kv").objectStore("kv").get("k");q.onsuccess=function(){ok(q.result||"")};q.onerror=function(){ok("")}});
+ if(!k){k=k2s(crypto.getRandomValues(new Uint8Array(16)));await new Promise(function(ok){var t=d.transaction("kv","readwrite");t.objectStore("kv").put(k,"k");t.oncomplete=ok;t.onerror=ok})}return k}
+async function recordatoriosEnc(){var L=recordatorios(),k="",out=[];try{k=await devKey()}catch(e){}
+ for(var i=0;i<L.length;i++){var o={k:L[i].k,at:L[i].at};if(k){try{o.blob=await enc({t:L[i].t,b:L[i].b},k)}catch(e){}}out.push(o)}return out}
+var pt;function pushSync(now){if(!PUSH_API||!SRV())return;clearTimeout(pt);pt=setTimeout(doPush,now?0:1500)}
+async function doPush(){var sub=null;
+ try{var r=await navigator.serviceWorker.getRegistration(),q=r&&await r.pushManager.getSubscription();sub=q?q.toJSON():null}catch(e){}
+ try{var res=await fetch(PUSH_API+"/api/sync",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sid:SID(),sub:sub,email:MAV()?MAIL():"",reminders:await recordatoriosEnc()})});if(!res.ok)throw 0;return true}
+ catch(e){pst("No pude hablar con el servidor de avisos. Se reintenta solo.");return false}}
+function regSW(){return navigator.serviceWorker.register("sw.js?a="+encodeURIComponent(PUSH_API)+"&s="+SID())}
+$("mav").checked=MAV();
+$("mav").onchange=function(){var on=this.checked;if(on&&!MAIL()){this.checked=false;pst("Primero guardá tu mail arriba.");return}
+ try{localStorage.setItem("postulaciones.mavisos",on?"1":"0");if(on&&!SRV())localStorage.setItem("postulaciones.srv","e")}catch(e){}pushSync(1);pst(on?"✅ Te mando los avisos también por mail.":"Listo: no te mando más mails.")};
+$("pon").onclick=async function(){var ok=false;pst("Activando…");if(IOS()&&!STANDALONE())showInstall(true);
+ try{if(!("serviceWorker" in navigator)||!("PushManager" in window))throw 1;if(await Notification.requestPermission()!=="granted")throw 2;
+  var reg=await regSW();await navigator.serviceWorker.ready;if(!VAPID_PUB)VAPID_PUB=(await(await fetch(PUSH_API+"/api/vapid")).json()).key;
+  if(!(await reg.pushManager.getSubscription()))await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:s2k(VAPID_PUB)});ok=true}catch(e){}
+ if(!ok&&!(MAIL()&&MAV())){pst("Este dispositivo no permite notificaciones con la app cerrada. En iPhone, agregá la página a la pantalla de inicio y abrila desde ahí. O guardá tu mail y tildá «Avisarme también por mail».");return}
+ try{localStorage.setItem("postulaciones.srv",ok?"p":"e")}catch(e){}
+ var r=await doPush();if(r)pst(ok?"✅ Listo: te avisa aunque la app esté cerrada.":"✅ Avisos por mail activos.")};
+$("poff").onclick=async function(){try{await fetch(PUSH_API+"/api/off",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sid:SID()})})}catch(e){}
+ try{var r=await navigator.serviceWorker.getRegistration();if(r){var q=await r.pushManager.getSubscription();if(q)await q.unsubscribe();await r.unregister()}}catch(e){}
+ try{localStorage.removeItem("postulaciones.srv");localStorage.removeItem("postulaciones.sid")}catch(e){}pst("Desactivado.")};
+function pushInit(){if(!PUSH_API)return;$("pw").hidden=false;var m=SRV();if(!m)return;if(m==="p")try{regSW()}catch(e){}pushSync(1);pst(m==="p"?"✅ Avisos con la app cerrada activos.":"✅ Avisos por mail activos.")}
+/* ---------- instalador ---------- */
+var dip=null,UA=navigator.userAgent;
+function IOS(){return /iPhone|iPad|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1)}
+function STANDALONE(){return !!navigator.standalone||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)}
+function iosOld(){var m=UA.match(/OS (\d+)_(\d+)/);return m?(+m[1])*100+(+m[2])<1604:false}
+var SH='<svg viewBox="0 0 24 24"><path d="M12 15V3M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+function showInstall(force){var b=$("ins");if(STANDALONE()){b.hidden=true;return}
+ try{if(!force&&localStorage.getItem("postulaciones.ins")==="1")return}catch(e){}
+ var h="",btn='<button id="icls">'+(force?"Cerrar":"Ahora no")+'</button>';
+ if(IOS()){if(/FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|Snapchat|GSA\//.test(UA))h='<h3>Abrila en Safari</h3><p>Este navegador interno no permite instalar la app. Copiá la dirección y abrila en Safari.</p>';
+  else h='<h3>Instalá la app en tu iPhone o iPad</h3><p>Es necesario para recibir avisos con la app cerrada:</p><ol><li>Tocá <b>Compartir</b> '+SH+' en la barra de Safari.</li><li>Elegí <b>Agregar a pantalla de inicio</b> y confirmá.</li><li>Abrí <b>Bitácora Jobs</b> desde el ícono nuevo.</li><li>En «Avisos y calendario» tocá <b>Activar avisos con la app cerrada</b>.</li></ol><p>La app instalada empieza vacía: antes activá la sincronización y pegá el código ahí.</p>'+(iosOld()?'<p><b>Tu iOS es anterior a 16.4:</b> los avisos con la app cerrada no funcionan hasta que actualices.</p>':"")}
+ else if(dip)h='<h3>Instalá la app</h3><p>Se abre como una app, con su ícono, y recibe los avisos.</p><button id="ibtn" class="main">Instalar</button> ';
+ else if(force)h='<h3>Instalá la app</h3><p>En el menú del navegador elegí <b>Instalar app</b> o <b>Agregar a pantalla de inicio</b>.</p>';
+ else return;
+ b.innerHTML=h+btn;b.hidden=false;if(force)b.scrollIntoView({behavior:"smooth"})}
+$("ins").onclick=function(e){var t=e.target.closest("button");if(!t)return;
+ if(t.id==="ibtn"&&dip){dip.prompt();dip.userChoice.then(function(){dip=null;$("ins").hidden=true})}
+ if(t.id==="icls"){try{localStorage.setItem("postulaciones.ins","1")}catch(x){}$("ins").hidden=true}};
+$("iv").onclick=function(){showInstall(true)};
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();dip=e;showInstall()});
+window.addEventListener("appinstalled",function(){$("ins").hidden=true;dip=null});
+if(STANDALONE())$("ivw").hidden=true;
+/* ---------- exportar imagen y PDF ---------- */
+function recMs(x){return x.rec?new Date(x.rec).getTime():NaN}
+function entData(){var n=data.length,now=Date.now(),L=[],E=data.filter(function(x){return x.estado==="Entrevista"}),done=E.filter(function(x){var m=entMs(x);return m==m&&m<now}).length,next=E.filter(function(x){var m=entMs(x);return m==m&&m>=now}).length,isAv=function(x){return x.estado==="Entrevista"||x.estado==="Oferta"},cv=data.filter(function(x){return x.cvd}),cw=data.filter(function(x){return x.cvv}),R={},ET={};
+ data.forEach(function(x){if(x.eres)R[x.eres]=(R[x.eres]||0)+1;if(x.etapa)ET[x.etapa]=(ET[x.etapa]||0)+1});
+ var le=data.filter(function(x){return isAv(x)||(x.hist||[]).some(function(q){return q[1]==="Entrevista"||q[1]==="Oferta"})}).length;
+ L.push("Entrevistas en curso: "+E.length+" (realizadas: "+done+" · próximas: "+next+" · sin fecha: "+(E.length-done-next)+")");
+ L.push("Llegaron a entrevista alguna vez: "+le+" de "+n+" ("+Math.round(le*100/n)+"%)");
+ var T=[];data.forEach(function(x){var f=(x.hist||[]).filter(function(q){return q[1]!=="Sin respuesta"})[0];if(f){var d=Math.round((Date.parse(f[0])-Date.parse(x.fec))/864e5);if(d>=0)T.push(d)}});
+ if(T.length)L.push("Días promedio hasta la primera respuesta: "+Math.round(T.reduce(function(a,b){return a+b},0)/T.length));
+ L.push("CV descargado por la empresa: "+cv.length+" de "+n+" ("+Math.round(cv.length*100/n)+"%)");
+ L.push("CV visto por la empresa: "+cw.length+" de "+n+" ("+Math.round(cw.length*100/n)+"%)");
+ if(cv.length)L.push("De las que descargaron tu CV, avanzaron: "+cv.filter(isAv).length+" de "+cv.length);
+ if(Object.keys(R).length)L.push("Resultado de las entrevistas: "+Object.keys(R).map(function(k){return k+": "+R[k]}).join(" · "));
+ return{lines:L,etapas:ETAPAS.filter(function(e){return ET[e]}).map(function(e){return{l:e,v:ET[e]}})}}
+var XP={rosa:{n:"Claro",bg:"#fdf0f4",card:"#ffffff",ink:"#3a1f2b",mute:"#855b6d",line:"#f2d4df",acc:"#b8235a",acc2:"#8a1745",hi:"#ffffff",bad:"#b4400f"},
+ verde:{n:"Verde",bg:"#f2f5f3",card:"#ffffff",ink:"#14221e",mute:"#5d6b66",line:"#d9e1dd",acc:"#0f6b57",acc2:"#0a4a3c",hi:"#ffffff",bad:"#c2410c"},
+ negro:{n:"Negro",bg:"#000000",card:"#101010",ink:"#f2f2f2",mute:"#a6a6a6",line:"#2a2a2a",acc:"#f2f2f2",acc2:"#bdbdbd",hi:"#f2f2f2",bad:"#ff9a6e",flat:true}};
+var DC={"Postulado":"#6b7f99","Entrevista":"#0f9d7a","Oferta":"#e0a526","Sin respuesta":"#9aa3a0","Rechazado":"#d9532b"};
+function xmsg(t){var m=$("xmsg");if(m)m.textContent=t}
+async function exportStats(key,noIcon){var T=XP[key];if(!T||!data.length)return;xmsg("Armando la imagen…");
+ try{
+ var n=data.length,c={};ESTADOS.forEach(function(e){c[e]=0});data.forEach(function(x){if(c[x.estado]!=null)c[x.estado]++});
+ var resp=c.Entrevista+c.Oferta+c.Rechazado,av=c.Entrevista+c.Oferta;
+ function pc(v){return Math.round(v*100/n)+"%"}
+ var P={},PK=[];data.forEach(function(x){var p=platName(x)||"Sin indicar",k=nk(p)||"sinindicar";if(!P[k]){P[k]={n:p,t:0,a:0};PK.push(k)}P[k].t++;if(x.estado==="Entrevista"||x.estado==="Oferta")P[k].a++});
+ PK.sort(function(a,b){return P[b].t-P[a].t||P[b].a-P[a].a});
+ var rowsE=ESTADOS.map(function(e){return{l:e,v:c[e],col:e==="Rechazado"?T.bad:(e==="Entrevista"||e==="Oferta")?T.acc:T.mute}}),rowsP=PK.slice(0,8).map(function(k){return{l:P[k].n,v:P[k].t,col:T.acc}});
+ var hy=hoy(),W=[0,0,0,0,0,0,0,0];data.forEach(function(x){var d=Math.floor((Date.parse(hy)-Date.parse(x.fec))/864e5);if(d>=0&&Math.floor(d/7)<8)W[Math.floor(d/7)]++});
+ var wm=Math.max.apply(null,W)||1,real=PK.filter(function(k){return k!=="sinindicar"}),notes=[];
+ if(real.length){notes.push("Donde más te postulaste: "+P[real[0]].n+" ("+P[real[0]].t+" de "+n+")");
+  var bk=real.slice().sort(function(a,b){return P[b].a-P[a].a||(P[b].a/P[b].t)-(P[a].a/P[a].t)})[0];
+  if(P[bk].a>0)notes.push("Donde más avanzaste: "+P[bk].n+" ("+P[bk].a+" de "+P[bk].t+" con entrevista u oferta)")}
+ var im=null;if(!noIcon&&!T.flat)im=await new Promise(function(ok){var i=new Image();i.onload=function(){ok(i)};i.onerror=function(){ok(null)};i.src="icon-192.png"});
+ var S=2,PW=1080,M=48,CW=984,PD=28,y=210,hE=70+rowsE.length*42+22,hP=70+rowsP.length*42+(notes.length?notes.length*30+12:0)+22,hW=250,H=y+148+250+(hE+20)+(hP+20)+(hW+20)+80;
+ var cv=document.createElement("canvas");cv.width=PW*S;cv.height=H*S;var g=cv.getContext("2d");g.scale(S,S);
+ var FF="'Avenir Next','Segoe UI',system-ui,-apple-system,sans-serif";
+ function rr(x,y,w,h,r){r=Math.max(0,Math.min(r,w/2,h/2));g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+ function tx(s,x,y,sz,wt,col,al,a){g.globalAlpha=a||1;g.font=wt+" "+sz+"px "+FF;g.fillStyle=col;g.textAlign=al||"left";g.textBaseline="alphabetic";g.fillText(s,x,y);g.globalAlpha=1}
+ function fit(s,w,sz,wt){g.font=wt+" "+sz+"px "+FF;if(g.measureText(s).width<=w)return s;while(s.length>1&&g.measureText(s+"…").width>w)s=s.slice(0,-1);return s+"…"}
+ function card(y,h){rr(M,y,CW,h,22);g.fillStyle=T.card;g.fill();g.lineWidth=1.5;g.strokeStyle=T.line;g.stroke()}
+ g.fillStyle=T.bg;g.fillRect(0,0,PW,H);rr(M,36,CW,150,30);
+ if(T.flat){g.fillStyle=T.card;g.fill();g.lineWidth=1.5;g.strokeStyle=T.line;g.stroke()}else{var gr=g.createLinearGradient(M,36,M+CW,186);gr.addColorStop(0,T.acc);gr.addColorStop(1,T.acc2);g.fillStyle=gr;g.fill()}
+ var tx0=M+PD;if(im){g.save();rr(M+26,62,98,98,24);g.clip();g.drawImage(im,M+26,62,98,98);g.restore();tx0=M+26+98+26}
+ tx("Bitácora Jobs",tx0,114,54,"800",T.hi);tx("Mis estadísticas de postulaciones",tx0,152,24,"500",T.hi,"left",.88);tx("Al "+fmt(hy),M+CW-26,76,22,"600",T.hi,"right",.85);
+ var kw=(CW-48)/4,K=[["Postulaciones",n,"en total",T.ink],["Respondieron",resp,pc(resp)+" del total",T.ink],["Avanzás",av,"entrevista u oferta",T.acc],["Sin respuesta",c["Sin respuesta"],pc(c["Sin respuesta"])+" del total",T.ink]];
+ K.forEach(function(k,i){var x=M+i*(kw+16);rr(x,y,kw,128,20);g.fillStyle=T.card;g.fill();g.lineWidth=1.5;g.strokeStyle=T.line;g.stroke();tx(fit(k[0],kw-36,20,"600"),x+18,y+34,20,"600",T.mute);tx(String(k[1]),x+18,y+88,52,"800",k[3]);tx(fit(k[2],kw-36,18,"500"),x+18,y+114,18,"500",T.mute)});
+ y+=148;
+ function bars(title,rows,mx,nts){var h=70+rows.length*42+(nts.length?nts.length*30+12:0)+22;card(y,h);tx(title,M+PD,y+44,28,"700",T.ink);var tw=CW-2*PD-270-60,x0=M+PD;
+  rows.forEach(function(r,i){var ry=y+70+i*42;tx(fit(r.l,250,22,"500"),x0,ry+22,22,"500",T.ink);rr(x0+270,ry+8,tw,14,7);g.fillStyle=T.line;g.fill();if(r.v>0){rr(x0+270,ry+8,Math.max(14,r.v/mx*tw),14,7);g.fillStyle=r.col;g.fill()}tx(String(r.v),M+CW-PD,ry+24,24,"700",T.ink,"right")});
+  nts.forEach(function(t,i){tx(fit(t,CW-2*PD,20,"500"),x0,y+70+rows.length*42+14+i*30+10,20,"500",T.mute)});y+=h+20}
+ card(y,230);tx("Cómo van tus postulaciones",M+PD,y+44,28,"700",T.ink);
+ var cx=M+PD+80,cy=y+142,r=64,a0=-Math.PI/2;g.lineWidth=28;g.lineCap="butt";g.strokeStyle=T.line;g.beginPath();g.arc(cx,cy,r,0,7);g.stroke();
+ ESTADOS.forEach(function(e){if(!c[e])return;var a1=a0+c[e]/n*2*Math.PI;g.strokeStyle=DC[e];g.beginPath();g.arc(cx,cy,r,a0,a1);g.stroke();a0=a1});
+ tx(String(n),cx,cy+8,34,"800",T.ink,"center");tx("postulaciones",cx,cy+30,14,"500",T.mute,"center");
+ ESTADOS.forEach(function(e,i){var ly=y+84+i*30;g.fillStyle=DC[e];g.beginPath();g.arc(M+PD+230,ly-6,8,0,7);g.fill();tx(e,M+PD+250,ly,22,"500",T.ink);tx(c[e]+" ("+pc(c[e])+")",M+CW-PD,ly,22,"700",T.ink,"right")});
+ y+=250;
+ bars("Estado de cada postulación",rowsE,Math.max.apply(null,rowsE.map(function(r){return r.v}))||1,[]);
+ bars("Dónde te postulaste",rowsP,rowsP[0].v||1,notes);
+ card(y,hW);tx("Postulaciones por semana (últimas 8)",M+PD,y+44,28,"700",T.ink);
+ var cw=(CW-2*PD)/8,by=y+210;
+ for(var j=0;j<8;j++){var wk=7-j,v=W[wk],bh=v>0?Math.max(8,v/wm*110):4,bx=M+PD+j*cw+(cw-56)/2;rr(bx,by-bh,56,bh,8);g.fillStyle=v>0?T.acc:T.line;g.fill();if(v>0)tx(String(v),bx+28,by-bh-10,22,"700",T.ink,"center");tx(fmt(mas(-(wk*7+6))).slice(0,5),bx+28,by+30,18,"500",T.mute,"center")}
+ y+=hW+20;tx("Creada por Flor Bagnis",PW/2,y+36,26,"700",T.mute,"center");
+ var blob=await new Promise(function(ok){cv.toBlob(ok,"image/png")});if(!blob)throw 0;
+ var fn="bitacora-jobs-estadisticas-"+T.n.toLowerCase()+".png",f=null;try{f=new File([blob],fn,{type:"image/png"})}catch(e){}
+ if(f&&/Android|iPhone|iPad|iPod/.test(UA)&&navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:"Mis estadísticas · Bitácora Jobs"});xmsg("Listo. Elegí «Guardar imagen» para tenerla en tu galería.");return}catch(e){if(e&&e.name==="AbortError"){xmsg("");return}}}
+ var a=document.createElement("a"),u=URL.createObjectURL(blob);a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);xmsg("Imagen descargada: modo "+T.n.toLowerCase()+".")
+ }catch(e){if(!noIcon)return exportStats(key,true);xmsg("No pude armar la imagen en este navegador.")}}
+function jb(c){var u=c.toDataURL("image/jpeg",.9).split(",")[1],b=atob(u),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+function makePDF(jp,w,h){var te=new TextEncoder(),parts=[],off=0,xr=[],N=jp.length,i;
+ function put(x){var u=typeof x==="string"?te.encode(x):x;parts.push(u);off+=u.length}
+ function ob(n,t){xr[n]=off;put(n+" 0 obj\n"+t+"\nendobj\n")}
+ function sm(n,d,b){xr[n]=off;put(n+" 0 obj\n<< "+d+" /Length "+b.length+" >>\nstream\n");put(b);put("\nendstream\nendobj\n")}
+ put("%PDF-1.4\n");put(new Uint8Array([37,226,227,207,211,10]));
+ var kids=[];for(i=0;i<N;i++)kids.push((5+3*i)+" 0 R");
+ ob(1,"<< /Type /Catalog /Pages 2 0 R >>");ob(2,"<< /Type /Pages /Kids ["+kids.join(" ")+"] /Count "+N+" >>");
+ for(i=0;i<N;i++){var im=3+3*i,ct=4+3*i,pg=5+3*i;
+  sm(im,"/Type /XObject /Subtype /Image /Width "+w+" /Height "+h+" /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode",jp[i]);
+  sm(ct,"",te.encode("q 595.28 0 0 841.89 0 0 cm /Im0 Do Q"));
+  ob(pg,"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 "+im+" 0 R >> >> /Contents "+ct+" 0 R >>")}
+ var xo=off,sz=2+3*N+1,x="xref\n0 "+sz+"\n0000000000 65535 f \n";for(i=1;i<sz;i++)x+=("0000000000"+xr[i]).slice(-10)+" 00000 n \n";
+ put(x+"trailer\n<< /Size "+sz+" /Root 1 0 R >>\nstartxref\n"+xo+"\n%%EOF");return new Blob(parts,{type:"application/pdf"})}
+async function exportPDF(){if(!data.length)return;
+ var PW=827,PH=1169,M=40,CW=PW-2*M,LIM=PH-64,FF="'Avenir Next','Segoe UI',system-ui,-apple-system,Arial,sans-serif",
+  C={ink:"#14221e",mute:"#5d6b66",line:"#d9e1dd",acc:"#0f6b57",acc2:"#0a4a3c",bad:"#c2410c",soft:"#f2f5f3"},jp=[],cv=null,g=null,y=0;
+ var n=data.length,c={};ESTADOS.forEach(function(e){c[e]=0});data.forEach(function(x){if(c[x.estado]!=null)c[x.estado]++});
+ var resp=c.Entrevista+c.Oferta+c.Rechazado,av=c.Entrevista+c.Oferta,kw=(CW-36)/4;
+ function pc(v){return Math.round(v*100/n)+"%"}
+ function rr(x,y,w,h,r){r=Math.max(0,Math.min(r,w/2,h/2));g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+ function tx(s,x,yy,sz,wt,col,al){g.font=wt+" "+sz+"px "+FF;g.fillStyle=col;g.textAlign=al||"left";g.textBaseline="alphabetic";g.fillText(s,x,yy)}
+ function fit(s,w,sz,wt){g.font=wt+" "+sz+"px "+FF;if(g.measureText(s).width<=w)return s;while(s.length>1&&g.measureText(s+"…").width>w)s=s.slice(0,-1);return s+"…"}
+ function wrap(s,w,sz,wt){g.font=wt+" "+sz+"px "+FF;var out=[];
+  String(s).split("\n").forEach(function(par){if(!par.trim()){out.push("");return}var line="";
+   par.split(/\s+/).forEach(function(wd){if(!wd)return;
+    while(g.measureText(wd).width>w){var k=wd.length;while(k>1&&g.measureText(wd.slice(0,k)).width>w)k--;if(line){out.push(line);line=""}out.push(wd.slice(0,k));wd=wd.slice(k)}
+    var t=line?line+" "+wd:wd;if(g.measureText(t).width>w&&line){out.push(line);line=wd}else line=t});out.push(line)});return out}
+ function fin(){if(!cv)return;tx("Bitácora Jobs · Creada por Flor Bagnis",M,PH-24,10,"500",C.mute);tx("Página "+(jp.length+1),M+CW,PH-24,10,"500",C.mute,"right");jp.push(jb(cv));cv.width=cv.height=0}
+ function np(){fin();cv=document.createElement("canvas");cv.width=PW*2;cv.height=PH*2;g=cv.getContext("2d");g.scale(2,2);g.fillStyle="#fff";g.fillRect(0,0,PW,PH);y=M}
+ function sec(t){tx(t,M,y+14,15,"700",C.ink);y+=28}
+ function bars(rows){var mx=Math.max.apply(null,rows.map(function(r){return r.v}))||1,lw=150,tw=CW-lw-40;
+  rows.forEach(function(r){tx(fit(r.l,lw-10,12,"500"),M,y+12,12,"500",C.ink);rr(M+lw,y+3,tw,10,5);g.fillStyle=C.line;g.fill();if(r.v>0){rr(M+lw,y+3,Math.max(10,r.v/mx*tw),10,5);g.fillStyle=r.col;g.fill()}tx(String(r.v),M+CW,y+13,12,"700",C.ink,"right");y+=24});y+=8}
+ xmsg("Armando el PDF…");
+ try{np();
+  rr(M,y,CW,78,18);var gr=g.createLinearGradient(M,y,M+CW,y+78);gr.addColorStop(0,C.acc);gr.addColorStop(1,C.acc2);g.fillStyle=gr;g.fill();
+  tx("Bitácora Jobs",M+22,y+38,28,"800","#fff");tx("Informe de postulaciones",M+22,y+60,13,"500","#fff");tx("Al "+fmt(hoy()),M+CW-22,y+38,13,"600","#fff","right");y+=98;
+  [["Postulaciones",n,"en total"],["Respondieron",resp,pc(resp)+" del total"],["Avanzás",av,"entrevista u oferta"],["Sin respuesta",c["Sin respuesta"],pc(c["Sin respuesta"])+" del total"]].forEach(function(k,i){
+   var x=M+i*(kw+12);rr(x,y,kw,74,12);g.fillStyle=C.soft;g.fill();tx(k[0],x+12,y+20,11,"600",C.mute);tx(String(k[1]),x+12,y+49,26,"800",i===2?C.acc:C.ink);tx(fit(k[2],kw-24,10,"500"),x+12,y+65,10,"500",C.mute)});
+  y+=94;sec("Cómo van tus postulaciones");
+  (function(){var cx=M+60,cy=y+60,r=40,a0=-Math.PI/2;g.lineWidth=18;g.lineCap="butt";g.strokeStyle=C.line;g.beginPath();g.arc(cx,cy,r,0,7);g.stroke();
+   ESTADOS.forEach(function(e){if(!c[e])return;var a1=a0+c[e]/n*2*Math.PI;g.strokeStyle=DC[e];g.beginPath();g.arc(cx,cy,r,a0,a1);g.stroke();a0=a1});
+   tx(String(n),cx,cy+6,20,"800",C.ink,"center");
+   ESTADOS.forEach(function(e,i){var ly=y+22+i*20;g.fillStyle=DC[e];g.beginPath();g.arc(M+150,ly-4,5,0,7);g.fill();tx(e,M+164,ly,12,"500",C.ink);tx(c[e]+" ("+pc(c[e])+")",M+CW,ly,12,"700",C.ink,"right")})})();
+  y+=130;sec("Estado de cada postulación");
+  bars(ESTADOS.map(function(e){return{l:e,v:c[e],col:e==="Rechazado"?C.bad:(e==="Entrevista"||e==="Oferta")?C.acc:C.mute}}));
+  var P={},PK=[];data.forEach(function(x){var p=platName(x)||"Sin indicar",k=nk(p)||"sinindicar";if(!P[k]){P[k]={n:p,t:0,a:0};PK.push(k)}P[k].t++;if(x.estado==="Entrevista"||x.estado==="Oferta")P[k].a++});
+  PK.sort(function(a,b){return P[b].t-P[a].t||P[b].a-P[a].a});sec("Dónde te postulaste");
+  bars(PK.slice(0,8).map(function(k){return{l:P[k].n,v:P[k].t,col:C.acc}}));
+  var real=PK.filter(function(k){return k!=="sinindicar"});
+  if(real.length){y-=2;tx("Donde más te postulaste: "+P[real[0]].n+" ("+P[real[0]].t+" de "+n+")",M,y+12,12,"500",C.mute);y+=20;
+   var bk=real.slice().sort(function(a,b){return P[b].a-P[a].a||(P[b].a/P[b].t)-(P[a].a/P[a].t)})[0];
+   if(P[bk].a>0){tx("Donde más avanzaste: "+P[bk].n+" ("+P[bk].a+" de "+P[bk].t+" con entrevista u oferta)",M,y+12,12,"500",C.mute);y+=20}y+=8}
+  var hy=hoy(),W=[0,0,0,0,0,0,0,0];data.forEach(function(x){var d=Math.floor((Date.parse(hy)-Date.parse(x.fec))/864e5);if(d>=0&&Math.floor(d/7)<8)W[Math.floor(d/7)]++});
+  var wm=Math.max.apply(null,W)||1;sec("Postulaciones por semana (últimas 8)");
+  var cw=CW/8,by=y+84;
+  for(var j=0;j<8;j++){var wk=7-j,v=W[wk],bh=v>0?Math.max(6,v/wm*64):3,bx=M+j*cw+(cw-36)/2;rr(bx,by-bh,36,bh,5);g.fillStyle=v>0?C.acc:C.line;g.fill();if(v>0)tx(String(v),bx+18,by-bh-5,12,"700",C.ink,"center");tx(fmt(mas(-(wk*7+6))).slice(0,5),bx+18,by+16,10,"500",C.mute,"center")}
+  y=by+38;var ED=entData();if(y>LIM-170)np();sec("Entrevistas y CV");
+  ED.lines.forEach(function(t){wrap(t,CW,12,"500").forEach(function(l2){tx(l2,M,y+12,12,"500",C.mute);y+=18})});y+=8;
+  if(ED.etapas.length)bars(ED.etapas.map(function(r){return{l:r.l,v:r.v,col:C.acc}}));
+  if(y>LIM-180)np();sec("Detalle de postulaciones");
+  data.slice().sort(function(a,b){return a.fec<b.fec?1:a.fec>b.fec?-1:0}).forEach(function(x){
+   var ln=[],cl=x.estado==="Rechazado"?C.bad:(x.estado==="Entrevista"||x.estado==="Oferta")?C.acc:C.mute,pl=platName(x),m=entMs(x),p=["Postulación: "+fmt(x.fec)];
+   function add(t,sz,wt,col,r,gap){ln.push({t:t,sz:sz,wt:wt,col:col,r:r,h:Math.round(sz*1.5)+(gap||0)})}
+   if(pl)p.push(pl);if(x.md)p.push(x.md);if(x.sue)p.push("Sueldo: "+x.sue);if(x.fav)p.push("Favorita");
+   add(fit(x.emp,CW-170,14,"700"),14,"700",C.ink,x.estado,0);
+   wrap(x.pue,CW-40,12,"400").forEach(function(t){add(t,12,"400",C.mute,"",0)});
+   wrap(p.join("   ·   "),CW-40,11,"500").forEach(function(t){add(t,11,"500",C.mute,"",0)});
+   var q=[];if(activo(x))q.push("Seguimiento: "+fmt(x.seg));if(x.estado==="Entrevista"&&m==m)q.push("Entrevista: "+abs(m));if(x.con)q.push("Contacto: "+x.con);
+   if(q.length)wrap(q.join("   ·   "),CW-40,11,"500").forEach(function(t){add(t,11,"500",C.mute,"",0)});
+   var iv=[];if(x.cvd)iv.push("CV descargado por la empresa"+(x.cvf?" ("+fmt(x.cvf)+")":""));if(x.cvv)iv.push("CV visto por la empresa"+(x.cvvf?" ("+fmt(x.cvvf)+")":""));if(x.etapa)iv.push("Etapa: "+x.etapa);if(x.eres)iv.push("Resultado: "+x.eres);if(x.entv)iv.push("Entrevistador/a: "+x.entv);
+   if(iv.length)wrap(iv.join("   ·   "),CW-40,11,"500").forEach(function(t){add(t,11,"500",C.mute,"",0)});
+   if(/^https?:/i.test(x.lnk||""))add(fit(x.lnk,CW-40,10,"400"),10,"400",C.acc,"",0);
+   if(x.nota){add("Anotaciones",11,"700",C.ink,"",3);wrap(x.nota,CW-40,12,"400").forEach(function(t){add(t,12,"400",C.ink,"",0)})}
+   if(x.edoc){add("Documentación de la entrevista",11,"700",C.ink,"",3);wrap(x.edoc,CW-40,12,"400").forEach(function(t){add(t,12,"400",C.ink,"",0)})}
+   var i=0;
+   while(i<ln.length){var avail=LIM-y-20,h=0,k=i;while(k<ln.length&&h+ln[k].h<=avail){h+=ln[k].h;k++}
+    if(k===i||(k-i<2&&k<ln.length)){np();continue}
+    var bh2=h+20;rr(M,y,CW,bh2,10);g.fillStyle="#fff";g.fill();g.lineWidth=1;g.strokeStyle=C.line;g.stroke();rr(M,y,5,bh2,2);g.fillStyle=cl;g.fill();
+    var ty=y+10;for(var z=i;z<k;z++){var L=ln[z];tx(L.t,M+16,ty+L.sz,L.sz,L.wt,L.col);if(L.r)tx(L.r,M+CW-14,ty+L.sz,11,"700",cl,"right");ty+=L.h}
+    y+=bh2+8;i=k}});
+  fin();
+  var blob=makePDF(jp,PW*2,PH*2),fn="bitacora-jobs-informe.pdf",f=null;try{f=new File([blob],fn,{type:"application/pdf"})}catch(e){}
+  if(f&&/Android|iPhone|iPad|iPod/.test(UA)&&navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:"Bitácora Jobs · Informe"});xmsg("Listo. Elegí «Guardar en Archivos» para tenerlo.");return}catch(e){if(e&&e.name==="AbortError"){xmsg("");return}}}
+  var a=document.createElement("a"),u=URL.createObjectURL(blob);a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);
+  xmsg("PDF descargado ("+jp.length+(jp.length===1?" página":" páginas")+").")
+ }catch(e){xmsg("No pude armar el PDF en este navegador.")}}
+$("estb").onclick=function(e){var b=e.target.closest("button");if(!b)return;if(b.dataset.x)exportStats(b.dataset.x);if(b.dataset.pdf)exportPDF()};
+/* ---------- tema y compartir ---------- */
+var TC={rosa:"#fdf0f4",verde:"#0f6b57",negro:"#000000"};
+function tema(t,keep){if(!TC[t])t="verde";document.documentElement.dataset.theme=t;try{if(keep)localStorage.setItem("postulaciones.tema",t)}catch(e){}
+ var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=TC[t];[].forEach.call(document.querySelectorAll("#tema button"),function(b){b.setAttribute("aria-pressed",b.dataset.t===t?"true":"false")})}
+$("tema").onclick=function(e){var b=e.target.closest("button");if(b)tema(b.dataset.t,true)};
+tema(document.documentElement.dataset.theme);
+$("share").onclick=async function(){var m=$("shmsg"),th=document.documentElement.dataset.theme||"verde",base=/^https?:/.test(location.protocol)?location.origin+location.pathname:"";
+ if(!base){m.textContent="Para compartirla, primero subí la página a un hosting con link (https).";return}
+ var url=base+"#t="+th,txt="Bitácora Jobs: llevá el control de tus postulaciones, seguimientos y entrevistas.";
+ try{if(navigator.share){await navigator.share({title:"Bitácora Jobs",text:txt,url:url});m.textContent="";return}}catch(e){if(e&&e.name==="AbortError"){m.textContent="";return}}
+ try{await navigator.clipboard.writeText(url);m.textContent="Link copiado. Pegalo donde quieras compartirla."}catch(e){m.textContent="Copiá este link: "+url}};
+load();resetSeg();autoSin();showCode();render();pushInit();if(IOS())showInstall();syncNow();avisar();setInterval(function(){syncNow();avisar()},60000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden){autoSin();var ae=document.activeElement;if(!(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName)))render();syncNow();pushSync()}});
+</script>
+</body>
+</html>
