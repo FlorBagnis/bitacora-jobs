@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Bitácora Jobs</title>
+<meta name="theme-color" content="#0f6b57">
+<script>try{var t=localStorage.getItem("postulaciones.tema");if(!t)t=matchMedia("(prefers-color-scheme:dark)").matches?"negro":"verde";document.documentElement.dataset.theme=t}catch(e){}</script>
+<meta name="apple-mobile-web-app-title" content="Bitácora Jobs">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f2f5f3;--card:#fff;--ink:#14221e;--mute:#5d6b66;--line:#d9e1dd;--acc:#0f6b57;--accink:#fff;--bad:#c2410c;--badbg:#fdebe3;--ok:#e3f2ec;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="rosa"]{--bg:#fdf0f4;--card:#fff;--ink:#3a1f2b;--mute:#855b6d;--line:#f2d4df;--acc:#b8235a;--accink:#fff;--bad:#b4400f;--badbg:#fdeadf;--ok:#fbe1ea}
+:root[data-theme="negro"]{color-scheme:dark;--bg:#000;--card:#101010;--ink:#f2f2f2;--mute:#a6a6a6;--line:#2a2a2a;--acc:#4fc2a3;--accink:#06120e;--bad:#ff9a6e;--badbg:#2a160d;--ok:#10231d}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "Avenir Next","Segoe UI",system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.7rem;margin:8px 0 2px;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:0 0 18px;font-size:.95rem}
+.alert{background:var(--badbg);color:var(--bad);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-weight:600}
+.alert.ok{background:var(--ok);color:var(--acc)}
+form{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:10px;grid-template-columns:1fr 1fr}
+form .full{grid-column:1/-1}
+label{font-size:.85rem;color:var(--mute);display:grid;gap:4px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 12px}
+button.main{background:var(--acc);color:var(--accink);border-color:var(--acc);font-weight:600}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 10px}
+.chips button{border-radius:99px;padding:5px 12px;font-size:.88rem}
+.chips button.on{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.item.late{border-left:4px solid var(--bad)}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:start}
+.item h2{font-size:1.05rem;margin:0}
+.item .role{color:var(--mute);margin:0;font-size:.95rem}
+.item a{color:var(--acc);font-size:.88rem}
+.meta{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--mute);margin:8px 0}
+.meta .due{color:var(--bad);font-weight:600}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.acts select{width:auto}
+.empty{text-align:center;color:var(--mute);padding:28px 8px}
+details{margin-top:22px;color:var(--mute);font-size:.9rem}
+details details{margin-top:12px}
+summary{cursor:pointer}
+textarea{min-height:80px;font:.8rem/1.3 ui-monospace,monospace;margin:8px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.row input{flex:1;min-width:160px;width:auto}
+code{display:block;word-break:break-all;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:.8rem;margin:6px 0;color:var(--ink)}
+#st{margin:8px 0;font-weight:600;color:var(--ink)}
+.priv{font-size:.82rem;color:var(--mute);margin-top:22px}
+.ent{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:8px 0;font-size:.85rem;color:var(--mute)}
+.ent input{width:auto}.ent .soon{color:var(--acc);font-weight:600}
+.alert.info{background:var(--ok);color:var(--acc)}
+.ins{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px}
+.ins h3{margin:0 0 6px;font-size:1rem}.ins ol{margin:6px 0 10px;padding-left:20px}.ins li{margin:5px 0}.ins svg{width:18px;height:18px;vertical-align:-3px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tema{display:flex;gap:10px;align-items:center;margin:0 0 14px;font-size:.85rem;color:var(--mute)}
+.tema button{width:30px;height:30px;border-radius:50%;padding:0;border:2px solid var(--line)}
+.tema button[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--acc)}
+.est{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.kpi b{display:block;font-size:1.6rem;line-height:1.1;color:var(--ink)}.kpi span{font-size:.82rem}
+.est-h{margin:14px 0 6px;font-size:.9rem;color:var(--ink);font-weight:600}
+.bar{display:grid;grid-template-columns:96px 1fr 28px;gap:8px;align-items:center;margin:5px 0;font-size:.85rem}
+.bar .trk{height:12px;background:var(--line);border-radius:99px;overflow:hidden}.bar .trk i{display:block;height:100%;border-radius:99px;min-width:2px}.bar b{color:var(--ink);text-align:right}
+.wk{display:flex;gap:6px;align-items:end;height:110px;margin-top:6px}
+.wk div{flex:1;display:flex;flex-direction:column;justify-content:end;align-items:center;height:100%;font-size:.72rem;gap:3px;min-width:0}
+.wk i{display:block;width:100%;background:var(--acc);border-radius:4px 4px 0 0;min-height:2px}.wk b{color:var(--ink)}
+@media (max-width:480px){form{grid-template-columns:1fr}.bar{grid-template-columns:84px 1fr 24px}}
+</style>
+</head>
+<body>
+<main>
+<h1>Bitácora Jobs</h1>
+<p class="sub">Cargá a dónde te postulaste y te muestro cuándo hacer seguimiento.</p>
+<div class="tema" id="tema">Color:
+<button data-t="rosa" style="background:#f7c6d6" aria-label="Rosa claro" title="Rosa claro"></button>
+<button data-t="verde" style="background:#0f6b57" aria-label="Verde" title="Verde"></button>
+<button data-t="negro" style="background:#000" aria-label="Negro" title="Negro"></button></div>
+<div id="alert"></div>
+<div id="ins" class="ins" hidden></div>
+<form id="f">
+<label>Empresa<input id="emp" required autocomplete="off"></label>
+<label>Puesto<input id="pue" required autocomplete="off"></label>
+<label class="full">Link de la oferta (opcional)<input id="lnk" type="url" placeholder="https://"></label>
+<label>Días para el seguimiento<input id="dias" type="number" min="1" max="90" value="7"></label>
+<div style="align-self:end"><button class="main" type="submit" style="width:100%">Guardar postulación</button></div>
+</form>
+<details id="est" open><summary>Estadísticas: cómo vas con tus postulaciones</summary><div id="estb"></div></details>
+<div class="chips" id="chips"></div>
+<div id="list"></div>
+
+<details id="av">
+<summary>Avisos de seguimiento</summary>
+<p>Con la página abierta (o en segundo plano) te aviso en el dispositivo: seguimientos del día y entrevistas 1 día y 1 hora antes. Para que avise con la página cerrada, agregá todo al calendario. Si cargás tu mail, el archivo del calendario también pide aviso por mail (lo respetan algunas apps; Google Calendar no, ahí lo elegís vos al abrir el evento). Tu mail queda solo en este dispositivo.</p>
+<div class="row"><button id="ical" class="main">Agregar seguimientos al calendario</button><button id="noti">Avisarme en este navegador</button></div>
+<div class="row"><input id="mail" type="email" placeholder="Tu mail" autocomplete="email"><button id="mg">Guardar mail</button></div>
+<div class="row"><button id="mm">Mandarme un resumen por mail</button></div>
+<div id="pw" hidden>
+<p>Avisos con la app cerrada: el servidor no lee tus datos: solo guarda la hora de cada aviso y un texto cifrado que únicamente este dispositivo puede abrir (no ve empresas, puestos, links ni mails). A la hora, te manda la notificación.</p>
+<div class="row"><button id="pon" class="main">Activar avisos con la app cerrada</button><button id="poff">Desactivar</button></div>
+<p id="pst"></p>
+<label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" id="mav" style="width:auto;margin-top:3px"><span>Avisarme también por mail (necesita tu mail guardado arriba; el servidor guarda tu dirección solo para enviarte los avisos y los mails no incluyen empresa ni puesto).</span></label>
+<div class="row" style="display:none"><button id="gon">Conectar mi Gmail</button><button id="goff" hidden>Desconectar Gmail</button></div>
+<p style="display:none">Con Gmail conectado, la app busca mails recientes que hablen de entrevistas (invitaciones de calendario o texto), te avisa al momento y carga la entrevista sola. Solo lee: no envía ni borra nada. El servidor guarda empresa, asunto y fecha, no el contenido de los mails. Podés desconectarlo cuando quieras.</p>
+<p id="gst"></p>
+</div>
+<div class="row" id="ivw"><button id="iv">Cómo instalar la app</button></div>
+<p id="avs"></p>
+<p>Si cambiás una fecha, volvé a tocar el primer botón: los avisos ya agregados suelen actualizarse en vez de repetirse. Los de postulaciones cerradas hay que borrarlos a mano del calendario.</p>
+</details>
+
+<details id="sy">
+<summary>Sincronizar con mi celular y mi compu</summary>
+<p id="st"></p>
+<div id="off">
+<button id="mk" class="main">Activar sincronización</button>
+<p>Esto crea un código. Después escribilo en tu otro dispositivo. Si ya tenés uno, pegalo acá:</p>
+<div class="row"><input id="ci" placeholder="Pegá tu código" autocomplete="off" spellcheck="false"><button id="cn">Conectar</button></div>
+</div>
+<div id="on" hidden>
+<p>Tu código:</p>
+<code id="cv"></code>
+<div class="row"><button id="cc">Copiar código</button><button id="cd">Desconectar</button></div>
+<p>Guardalo bien: quien tenga el código puede ver y cambiar tus postulaciones. Tus datos viajan cifrados y el servicio no puede leerlos.</p>
+</div>
+<details>
+<summary>Copia manual (sin internet)</summary>
+<textarea id="bk" readonly spellcheck="false"></textarea>
+<button id="cp">Copiar mi código de respaldo</button>
+<textarea id="inp" placeholder="Pegá acá un respaldo del otro dispositivo" spellcheck="false"></textarea>
+<button id="imp">Unir</button>
+</details>
+</details>
+<p class="priv">Tus postulaciones quedan en este navegador. Si activás la sincronización, se guardan cifradas y solo se leen con tu código.</p>
+</main>
+<script>
+var KEY="postulaciones.v1",CK="postulaciones.code",RA="https://api.restful-api.dev/objects/",
+ESTADOS=["Postulado","Entrevista","Oferta","Sin respuesta","Rechazado"],data=[],gone={},filtro="Todos",CODE="",busy=false,again=false,timer;
+function $(i){return document.getElementById(i)}
+var PUSH_API=/^https:/.test(location.origin)?location.origin:"",VAPID_PUB="";/* completá con los datos de tu servidor (ver LEEME.md) */
+/* ---------- datos locales ---------- */
+function load(){try{var r=localStorage.getItem(KEY);data=r?JSON.parse(r):[];var g=localStorage.getItem(KEY+".del");gone=g?JSON.parse(g):{};CODE=localStorage.getItem(CK)||""}catch(e){data=[];gone={}}
+ if(!Array.isArray(data))data=[];if(!gone||typeof gone!=="object")gone={};data.forEach(function(x){if(!x.mod)x.mod=1})}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));localStorage.setItem(KEY+".del",JSON.stringify(gone))}catch(e){}}
+function save(){persist();pushSync();if(CODE){clearTimeout(timer);timer=setTimeout(syncNow,800)}}
+function iso(d){var z=d.getTimezoneOffset()*6e4;return new Date(d-z).toISOString().slice(0,10)}
+function hoy(){return iso(new Date())}
+function mas(n){var d=new Date();d.setDate(d.getDate()+n);return iso(d)}
+function fmt(s){var p=s.split("-");return p[2]+"/"+p[1]+"/"+p[0]}
+function activo(x){return x.estado==="Postulado"||x.estado==="Sin respuesta"}
+function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML.replace(/"/g,"&quot;")}
+function mergeObj(o){var n=0;if(!o||!Array.isArray(o.i))throw 0;
+ Object.keys(o.d||{}).forEach(function(k){if(!gone[k])gone[k]=o.d[k]});
+ o.i.forEach(function(r){if(!r||!r.id||gone[r.id])return;var l=data.filter(function(x){return x.id===r.id})[0];if(!l){data.push(r);n++}else if((r.mod||0)>(l.mod||0)){Object.assign(l,r);n++}});
+ data=data.filter(function(x){return !gone[x.id]});persist();return n}
+function norm(i,d){return JSON.stringify([(i||[]).slice().sort(function(a,b){return a.id<b.id?-1:1}),Object.keys(d||{}).sort()])}
+/* ---------- cifrado (AES-GCM, la llave viaja solo en el código) ---------- */
+function b2s(u){var s="";for(var i=0;i<u.length;i++)s+=String.fromCharCode(u[i]);return btoa(s)}
+function s2b(s){var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+function k2s(u){return b2s(u).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function s2k(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return s2b(s)}
+async function ckey(k,use){return crypto.subtle.importKey("raw",s2k(k),"AES-GCM",false,[use])}
+async function enc(obj,k){var iv=crypto.getRandomValues(new Uint8Array(12));var ct=await crypto.subtle.encrypt({name:"AES-GCM",iv:iv},await ckey(k,"encrypt"),new TextEncoder().encode(JSON.stringify(obj)));return{v:1,iv:b2s(iv),ct:b2s(new Uint8Array(ct))}}
+async function dec(p,k){var pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:s2b(p.iv)},await ckey(k,"decrypt"),s2b(p.ct));return JSON.parse(new TextDecoder().decode(pt))}
+/* ---------- servidor (mismo servicio que usa Plantita) ---------- */
+async function rq(m,id,body){var r=await fetch(RA+(id||""),{method:m,headers:{"Content-Type":"application/json"},body:body});if(!r.ok)throw r.status;return r}
+function st(t){$("st").textContent=t}
+function why(e){return e===404?"el código ya no existe en el servidor":typeof e==="number"?"error "+e:"sin conexión o cifrado no disponible (abrí la app desde https)"}
+function showCode(){$("off").hidden=!!CODE;$("on").hidden=!CODE;$("cv").textContent=CODE}
+function setCode(c){CODE=c;try{c?localStorage.setItem(CK,c):localStorage.removeItem(CK)}catch(e){}showCode()}
+async function syncNow(){if(!CODE)return;if(busy){again=true;return}busy=true;
+ try{var p=CODE.split("."),id=p[0],k=p[1];
+  var o=await(await rq("GET",id)).json();var remote=await dec(o.data,k);
+  mergeObj(remote);render();pushSync();
+  if(norm(data,gone)!==norm(remote.i,remote.d)){var body=await enc({i:data,d:gone},k);await rq("PUT",id,JSON.stringify({name:"postulaciones",data:body}))}
+  st("☁️ Sincronizado")}
+ catch(e){st("☁️ Sin sincronizar ("+why(e)+"). Tus cambios quedan acá y se reintentan.")}
+ busy=false;if(again){again=false;syncNow()}}
+$("mk").onclick=async function(){st("Creando código…");
+ try{var raw=crypto.getRandomValues(new Uint8Array(16)),k=k2s(raw);var body=await enc({i:data,d:gone},k);
+  var o=await(await rq("POST","",JSON.stringify({name:"postulaciones",data:body}))).json();if(!o||!o.id)throw 0;
+  setCode(o.id+"."+k);st("☁️ Listo. Escribí este código en tu otro dispositivo.")}
+ catch(e){st("No se pudo crear el código ("+why(e)+"). Si abrís la página desde Claude o como archivo, el navegador bloquea la red: subila a un hosting con https.")}};
+$("cn").onclick=async function(){var c=$("ci").value.trim();
+ if(!/^[\w-]{6,64}\.[\w-]{16,32}$/.test(c)){st("Ese código no parece válido.");return}
+ st("Conectando…");
+ try{var p=c.split("."),o=await(await rq("GET",p[0])).json();var remote=await dec(o.data,p[1]);
+  setCode(c);mergeObj(remote);render();$("ci").value="";await syncNow()}
+ catch(e){st(e===404?"No encontré ese código. Revisá que esté completo.":"No pude conectar ("+why(e)+").")}};
+$("cc").onclick=function(){try{navigator.clipboard.writeText(CODE).then(function(){st("Código copiado. Mandátelo a vos misma para usarlo en el otro dispositivo.")})}catch(e){st("Copiá el código a mano.")}};
+$("cd").onclick=function(){setCode("");st("📴 Desconectado: tus datos siguen en este dispositivo.")};
+/* ---------- copia manual ---------- */
+function code(){return "PS1."+btoa(unescape(encodeURIComponent(JSON.stringify({i:data,d:gone}))))}
+$("imp").onclick=function(){var t=$("inp").value.trim().replace(/^PS1\./,"");if(!t)return;try{var n=mergeObj(JSON.parse(decodeURIComponent(escape(atob(t)))));$("inp").value="";save();render();alert(n?"Listo: se actualizaron "+n+" postulaciones.":"Ya estaba todo al día.")}catch(err){alert("Ese código no es válido. Copialo de nuevo, completo.")}};
+$("cp").onclick=function(){var b=$("bk");b.select();try{navigator.clipboard.writeText(b.value).then(function(){alert("Código copiado.")},function(){document.execCommand("copy")})}catch(e){try{document.execCommand("copy")}catch(_){}}};
+/* ---------- pantalla ---------- */
+function render(){
+ var h=hoy(),venc=data.filter(function(x){return activo(x)&&x.seg<=h}),a=$("alert");
+ if(venc.length){a.innerHTML='<div class="alert">'+(venc.length===1?"Tenés 1 seguimiento para hacer hoy.":"Tenés "+venc.length+" seguimientos para hacer hoy.")+'</div>'}
+ else if(data.length){a.innerHTML='<div class="alert ok">No tenés seguimientos pendientes por hoy.</div>'}else a.innerHTML="";
+ var c=$("chips");c.innerHTML="";
+ ["Todos"].concat(ESTADOS).forEach(function(e){var b=document.createElement("button");b.textContent=e;if(e===filtro)b.className="on";b.onclick=function(){filtro=e;render()};c.appendChild(b)});
+ var L=data.filter(function(x){return filtro==="Todos"||x.estado===filtro}).sort(function(p,q){return p.seg<q.seg?-1:1}),el=$("list");
+ if(!L.length){el.innerHTML='<div class="empty">'+(data.length?"No hay postulaciones con ese estado.":"Todavía no cargaste ninguna. Empezá con el formulario de arriba.")+'</div>'}
+ else el.innerHTML=L.map(function(x){var late=activo(x)&&x.seg<=h;
+  return '<div class="item'+(late?" late":"")+'"><div class="top"><div><h2>'+esc(x.emp)+'</h2><p class="role">'+esc(x.pue)+'</p></div>'+(/^https?:\/\//i.test(x.lnk||"")?'<a href="'+esc(x.lnk)+'" target="_blank" rel="noopener">Ver oferta</a>':"")+'</div>'
+  +'<div class="meta"><span>Te postulaste el '+fmt(x.fec)+'</span><span class="'+(late?"due":"")+'">Seguimiento: '+fmt(x.seg)+'</span></div>'
+  +entBlock(x)+'<div class="acts"><select data-id="'+esc(x.id)+'" aria-label="Estado">'+ESTADOS.map(function(e){return '<option'+(e===x.estado?" selected":"")+'>'+e+'</option>'}).join("")+'</select>'
+  +(activo(x)?'<button data-act="hecho" data-id="'+esc(x.id)+'">Ya hice seguimiento (+7 días)</button>':"")
+  +'<button data-act="del" data-id="'+esc(x.id)+'">Borrar</button></div></div>'}).join("");
+ $("bk").value=code();stats();
+ a.innerHTML+=proximas().map(function(t){return '<div class="alert info">🎤 '+t+'</div>'}).join("");
+}
+function stats(){var el=$("estb");if(!el)return;var n=data.length;
+ if(!n){el.innerHTML='<p>Cuando cargues postulaciones vas a ver acá cómo te va: cuántas respondieron, cuántas avanzan y cuántas nunca contestaron.</p>';return}
+ var c={};ESTADOS.forEach(function(e){c[e]=0});data.forEach(function(x){if(c[x.estado]!=null)c[x.estado]++});
+ var resp=c.Entrevista+c.Oferta+c.Rechazado,av=c.Entrevista+c.Oferta;
+ function pc(v){return Math.round(v*100/n)+"%"}
+ function kpi(t,v,s){return '<div class="kpi"><span>'+t+'</span><b>'+v+'</b><span>'+s+'</span></div>'}
+ var col={"Postulado":"var(--mute)","Entrevista":"var(--acc)","Oferta":"var(--acc)","Sin respuesta":"var(--mute)","Rechazado":"var(--bad)"};
+ var mx=Math.max.apply(null,ESTADOS.map(function(e){return c[e]}))||1;
+ var h='<div class="est">'+kpi("Postulaciones",n,"en total")+kpi("Respondieron",resp,pc(resp)+" (incluye rechazos)")+kpi("Avanzás",av,pc(av)+" con entrevista u oferta")+kpi("Sin respuesta",c["Sin respuesta"],pc(c["Sin respuesta"])+" nunca contestaron")+'</div>';
+ h+='<p class="est-h">Estado de cada postulación</p>'+ESTADOS.map(function(e){return '<div class="bar"><span>'+e+'</span><div class="trk"><i style="width:'+Math.round(c[e]*100/mx)+'%;background:'+col[e]+'"></i></div><b>'+c[e]+'</b></div>'}).join("");
+ var hy=hoy(),W=[0,0,0,0,0,0,0,0];
+ data.forEach(function(x){var d=Math.floor((Date.parse(hy)-Date.parse(x.fec))/864e5);if(d>=0&&Math.floor(d/7)<8)W[Math.floor(d/7)]++});
+ var wm=Math.max.apply(null,W)||1;
+ h+='<p class="est-h">Postulaciones por semana (últimas 8)</p><div class="wk">'+W.map(function(v,k){return [k,v]}).reverse().map(function(p){return '<div title="'+p[1]+' postulaciones"><b>'+p[1]+'</b><i style="height:'+Math.round(p[1]*80/wm)+'px"></i><span>'+fmt(mas(-(p[0]*7+6))).slice(0,5)+'</span></div>'}).join("")+'</div>';
+ h+='<p class="priv">Las postulaciones sin novedades por '+DIAS_SIN_RESP+' días pasan solas a «Sin respuesta».</p>';el.innerHTML=h}
+var DIAS_SIN_RESP=14;
+function autoSin(){var h=hoy(),ch=0;data.forEach(function(x){if(x.estado==="Postulado"&&Math.floor((Date.parse(h)-Date.parse(x.fec))/864e5)>=DIAS_SIN_RESP){x.estado="Sin respuesta";x.mod=Date.now();ch++}});if(ch)save()}
+$("f").onsubmit=function(e){e.preventDefault();var d=parseInt($("dias").value,10)||7;
+ data.push({id:String(Date.now()),emp:$("emp").value.trim(),pue:$("pue").value.trim(),lnk:$("lnk").value.trim(),fec:hoy(),seg:mas(d),estado:"Postulado",mod:Date.now()});
+ save();this.reset();$("dias").value=7;render()};
+$("list").onchange=function(e){var q=e.target.dataset.ent;
+ if(q){data.forEach(function(x){if(x.id===q){x.ent=e.target.value;x.mod=Date.now()}});save();render();avisar();return}
+ var id=e.target.dataset.id;if(!id)return;data.forEach(function(x){if(x.id===id){x.estado=e.target.value;x.mod=Date.now()}});save();render()};
+$("list").onclick=function(e){var b=e.target.closest("button");if(!b)return;var id=b.dataset.id;
+ if(b.dataset.act==="del"&&confirm("¿Borrar esta postulación?")){gone[id]=Date.now();data=data.filter(function(x){return x.id!==id});save();render()}
+ if(b.dataset.act==="hecho"){data.forEach(function(x){if(x.id===id){x.seg=mas(7);x.estado="Sin respuesta";x.mod=Date.now()}});save();render()}};
+/* ---------- entrevistas ---------- */
+function entMs(x){return x.ent?new Date(x.ent).getTime():NaN}
+function cuando(ms){var d=new Date(ms),dd=iso(d);return (dd===hoy()?"hoy":dd===mas(1)?"mañana":fmt(dd))+" a las "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
+function proximas(){var n=Date.now();return data.filter(function(x){var m=entMs(x);return x.estado==="Entrevista"&&m>=n-36e5&&m<=n+48*36e5}).sort(function(a,b){return entMs(a)-entMs(b)}).map(function(x){return "Entrevista con "+esc(x.emp)+" "+cuando(entMs(x))})}
+function gcal(x){var d=new Date(entMs(x)),e=new Date(d.getTime()+36e5);return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("Entrevista: "+x.emp+" ("+x.pue+")")+"&dates="+stamp(d)+"/"+stamp(e)+"&details="+encodeURIComponent(x.lnk||"")}
+function entBlock(x){if(x.estado!=="Entrevista")return"";var m=entMs(x);
+ return '<div class="ent"><label>Fecha y hora de la entrevista<input type="datetime-local" data-ent="'+esc(x.id)+'" value="'+esc(x.ent||"")+'"></label>'+(m==m?'<span class="soon">'+cuando(m)+'</span><a target="_blank" rel="noopener" href="'+esc(gcal(x))+'">Google Calendar</a>':'<span>Poné la fecha para que te avise.</span>')+'</div>'}
+/* ---------- avisos ---------- */
+function ics(t){return String(t).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n")}
+function stamp(d){return d.toISOString().replace(/[-:]/g,"").replace(/\.\d+/,"")}
+function MAIL(){try{return localStorage.getItem("postulaciones.mail")||""}catch(e){return""}}
+function MAV(){try{return localStorage.getItem("postulaciones.mavisos")==="1"}catch(e){return false}}
+function makeIcs(){var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Postulaciones//ES","CALSCALE:GREGORIAN"],h=hoy(),n=0,M=MAIL();
+ function al(t,d){L.push("BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+ics(d),"TRIGGER:"+t,"END:VALARM");if(M)L.push("BEGIN:VALARM","ACTION:EMAIL","SUMMARY:"+ics(d),"DESCRIPTION:"+ics(d),"ATTENDEE:mailto:"+M,"TRIGGER:"+t,"END:VALARM")}
+ data.forEach(function(x){var uid=String(x.id).replace(/[^\w-]/g,""),sq=Math.floor((x.mod||0)/1000);
+  if(activo(x)){var f=(x.seg<h?h:x.seg).replace(/-/g,"");n++;
+   L.push("BEGIN:VEVENT","UID:post-"+uid+"@postulaciones","DTSTAMP:"+stamp(new Date()),"SEQUENCE:"+sq,"DTSTART:"+f+"T090000","DURATION:PT15M","SUMMARY:"+ics("Seguimiento: "+x.emp+" ("+x.pue+")"),"DESCRIPTION:"+ics("Escribile a "+x.emp+" para preguntar cómo sigue tu postulación."));al("PT0M","Seguimiento: "+x.emp);L.push("END:VEVENT")}
+  var m=entMs(x);if(x.estado==="Entrevista"&&m==m&&m>Date.now()){n++;
+   L.push("BEGIN:VEVENT","UID:ent-"+uid+"@postulaciones","DTSTAMP:"+stamp(new Date()),"SEQUENCE:"+sq,"DTSTART:"+stamp(new Date(m)),"DURATION:PT1H","SUMMARY:"+ics("Entrevista: "+x.emp+" ("+x.pue+")"),"DESCRIPTION:"+ics(x.lnk||"Entrevista"));al("-P1D","Entrevista mañana: "+x.emp);al("-PT1H","Entrevista en 1 hora: "+x.emp);L.push("END:VEVENT")}});
+ L.push("END:VCALENDAR");return{n:n,text:L.join("\r\n")}}
+$("ical").onclick=function(){var r=makeIcs();if(!r.n){$("avs").textContent="No tenés postulaciones activas para agendar.";return}
+ var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([r.text],{type:"text/calendar"}));a.download="seguimientos.ics";document.body.appendChild(a);a.click();a.remove();
+ $("avs").textContent="Abrí el archivo seguimientos.ics para agregar "+r.n+(r.n===1?" aviso":" avisos")+" a tu calendario."};
+function notifOK(){return "Notification" in window&&Notification.permission==="granted"}
+function notif(t,b){try{new Notification(t,{body:b})}catch(e){try{navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b})})}catch(_){}}}
+function avisar(){if(!notifOK()||SRV()==="p")return;var h=hoy(),n=Date.now(),S={};try{S=JSON.parse(localStorage.getItem("postulaciones.nt2")||"{}")}catch(e){}
+ var v=data.filter(function(x){return activo(x)&&x.seg<=h});
+ if(v.length&&S.seg!==h){S.seg=h;notif("Seguimientos pendientes",v.length===1?"Hoy toca hacer seguimiento a "+v[0].emp+".":"Tenés "+v.length+" seguimientos para hacer hoy.")}
+ data.forEach(function(x){var m=entMs(x);if(x.estado!=="Entrevista"||m!==m||m<n)return;
+  [["h",36e5,"en menos de 1 hora"],["d",864e5,"mañana"]].forEach(function(r){var k=x.id+"|"+x.ent+"|"+r[0];if(m-n<=r[1]&&!S[k]&&(r[0]==="h"||m-n>36e5)){S[k]=1;notif("Entrevista "+r[2],x.emp+" · "+cuando(m))}})});
+ try{localStorage.setItem("postulaciones.nt2",JSON.stringify(S))}catch(e){}}
+function resumen(){var h=hoy(),n=Date.now(),L=[];
+ data.filter(function(x){return x.estado==="Entrevista"&&entMs(x)>=n}).sort(function(a,b){return entMs(a)-entMs(b)}).forEach(function(x){L.push("Entrevista: "+x.emp+" ("+x.pue+") - "+cuando(entMs(x)))});
+ data.filter(activo).sort(function(a,b){return a.seg<b.seg?-1:1}).forEach(function(x){L.push("Seguimiento: "+x.emp+" ("+x.pue+") - "+(x.seg<=h?"pendiente":fmt(x.seg)))});
+ return L.join("\n")}
+$("mail").value=MAIL();$("mav").checked=MAV();
+$("mav").onchange=function(){var on=this.checked;if(on&&!MAIL()){this.checked=false;pst("Primero escribí tu mail arriba y tocá «Guardar mail».");return}
+ try{localStorage.setItem("postulaciones.mavisos",on?"1":"0");if(on&&!SRV())localStorage.setItem("postulaciones.srv","e")}catch(e){}
+ pushSync(1);pst(on?"✅ Te mando los avisos también por mail.":"Listo: no te mando más mails y se borra tu dirección del servidor.")};
+$("mg").onclick=function(){var v=$("mail").value.trim();if(v&&!/^\S+@\S+\.\S+$/.test(v)){$("avs").textContent="Ese mail no parece válido.";return}
+ try{v?localStorage.setItem("postulaciones.mail",v):localStorage.removeItem("postulaciones.mail")}catch(e){}
+ pushSync(1);
+ $("avs").textContent=v?"Mail guardado. Ahora el archivo del calendario pide aviso por mail, y podés mandarte el resumen.":"Mail borrado."};
+$("mm").onclick=function(){var m=MAIL(),r=resumen();if(!m){$("avs").textContent="Primero guardá tu mail.";return}if(!r){$("avs").textContent="No hay nada para resumir todavía.";return}
+ location.href="mailto:"+encodeURIComponent(m)+"?subject="+encodeURIComponent("Bitácora Jobs: resumen")+"&body="+encodeURIComponent(r)};
+$("noti").onclick=function(){if(!("Notification" in window)){$("avs").textContent="Este navegador no permite avisos. Usá el calendario.";return}
+ try{Notification.requestPermission().then(function(p){$("avs").textContent=p==="granted"?"Listo: te aviso mientras la página esté abierta, incluso en segundo plano. Con la página cerrada, usá el calendario.":"Avisos bloqueados. Podés habilitarlos en los ajustes del navegador.";avisar()})}catch(e){$("avs").textContent="No se pudieron activar los avisos acá."}};
+/* ---------- avisos con la app cerrada (servidor) ---------- */
+function SRV(){try{return localStorage.getItem("postulaciones.srv")||""}catch(e){return""}}
+function SID(){try{var v=localStorage.getItem("postulaciones.sid");if(!v){v=k2s(crypto.getRandomValues(new Uint8Array(16)));localStorage.setItem("postulaciones.sid",v)}return v}catch(e){return""}}
+function pst(t){$("pst").textContent=t}
+function abs(m){var d=new Date(m);return fmt(iso(d))+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
+function recordatorios(){var n=Date.now(),L=[],v=6*36e5;
+ data.forEach(function(x){
+  if(activo(x)){var f=new Date(x.seg+"T09:00:00").getTime();if(f>n-v)L.push({k:x.id+"|"+x.seg+"|s",at:f,t:"Seguimiento: "+x.emp,b:"Hoy toca escribirle a "+x.emp+" por "+x.pue+"."})}
+  var m=entMs(x);if(x.estado==="Entrevista"&&m==m){
+   if(m-864e5>n-v)L.push({k:x.id+"|"+x.ent+"|d",at:m-864e5,t:"Entrevista mañana: "+x.emp,b:x.pue+" · "+abs(m)});
+   if(m-36e5>n-v)L.push({k:x.id+"|"+x.ent+"|h",at:m-36e5,t:"Entrevista en 1 hora: "+x.emp,b:x.pue+" · "+abs(m)})}});
+ return L}
+/* llave del dispositivo: cifra el texto de cada aviso, el servidor no puede leerlo */
+function idbOpen(){return new Promise(function(ok,no){var q=indexedDB.open("postulaciones-sw",1);q.onupgradeneeded=function(){q.result.createObjectStore("kv")};q.onsuccess=function(){ok(q.result)};q.onerror=function(){no(q.error)}})}
+async function devKey(){var d=await idbOpen();var k=await new Promise(function(ok){var q=d.transaction("kv").objectStore("kv").get("k");q.onsuccess=function(){ok(q.result||"")};q.onerror=function(){ok("")}});
+ if(!k){k=k2s(crypto.getRandomValues(new Uint8Array(16)));await new Promise(function(ok){var t=d.transaction("kv","readwrite");t.objectStore("kv").put(k,"k");t.oncomplete=ok;t.onerror=ok})}
+ return k}
+async function recordatoriosEnc(){var L=recordatorios(),k="",out=[];try{k=await devKey()}catch(e){}
+ for(var i=0;i<L.length;i++){var o={k:L[i].k,at:L[i].at};if(k){try{o.blob=await enc({t:L[i].t,b:L[i].b},k)}catch(e){}}out.push(o)}return out}
+var pt;function pushSync(now){if(!PUSH_API||!SRV())return;clearTimeout(pt);pt=setTimeout(doPush,now?0:1500)}
+async function doPush(){var sub=null;
+ try{var r=await navigator.serviceWorker.getRegistration();var q=r&&await r.pushManager.getSubscription();sub=q?q.toJSON():null}catch(e){}
+ try{var res=await fetch(PUSH_API+"/api/sync",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sid:SID(),sub:sub,email:MAV()?MAIL():"",reminders:await recordatoriosEnc()})});if(!res.ok)throw 0;return true}
+ catch(e){pst("No pude hablar con el servidor de avisos. Se reintenta solo.");return false}}
+function regSW(){return navigator.serviceWorker.register("sw.js?a="+encodeURIComponent(PUSH_API)+"&s="+SID())}
+$("pon").onclick=async function(){var ok=false;pst("Activando…");if(IOS()&&!STANDALONE())showInstall(true);
+ try{if(!("serviceWorker" in navigator)||!("PushManager" in window))throw 1;
+  if(await Notification.requestPermission()!=="granted")throw 2;
+  var reg=await regSW();await navigator.serviceWorker.ready;
+  if(!VAPID_PUB)VAPID_PUB=(await(await fetch(PUSH_API+"/api/vapid")).json()).key;if(!(await reg.pushManager.getSubscription()))await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:s2k(VAPID_PUB)});ok=true}catch(e){}
+ if(!ok&&!(MAIL()&&MAV())){pst("Este dispositivo no permite notificaciones con la app cerrada. En iPhone, agregá la página a la pantalla de inicio y abrila desde ahí. Podés usar el calendario, o guardar tu mail y tildar «Avisarme también por mail».");return}
+ try{localStorage.setItem("postulaciones.srv",ok?"p":"e")}catch(e){}
+ var r=await doPush();if(r)pst(ok?"✅ Listo: te avisa aunque la app esté cerrada"+(MAV()&&MAIL()?", y también por mail.":"."):"✅ Avisos por mail activos. Las notificaciones no están disponibles en este dispositivo.")};
+$("poff").onclick=async function(){
+ try{await fetch(PUSH_API+"/api/off",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sid:SID()})})}catch(e){}
+ try{var r=await navigator.serviceWorker.getRegistration();if(r){var q=await r.pushManager.getSubscription();if(q)await q.unsubscribe();await r.unregister()}}catch(e){}
+ try{localStorage.removeItem("postulaciones.srv");localStorage.removeItem("postulaciones.sid")}catch(e){}pst("Desactivado.")};
+function tzn(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||""}catch(e){return""}}
+function gst(t){$("gst").textContent=t}
+function nk(s){return String(s||"").toLowerCase().replace(/[^a-z0-9]/g,"")}
+function isoLocal(ms){var d=new Date(ms);return iso(d)+"T"+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
+$("gon").onclick=function(){if(!SRV()){gst("Primero tocá \"Activar avisos con la app cerrada\".");return}
+ location.href=PUSH_API+"/auth/google/start?sid="+SID()+"&ret="+encodeURIComponent(location.origin+location.pathname)};
+$("goff").onclick=async function(){try{await fetch(PUSH_API+"/api/gmail/off",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sid:SID()})})}catch(e){}gmStatus()};
+async function gmStatus(){return;
+ try{var r=await(await fetch(PUSH_API+"/api/status?sid="+SID())).json();$("goff").hidden=!(r.gmail||r.bad);$("gon").textContent=r.gmail?"Gmail conectado":"Conectar mi Gmail";
+  gst(r.gmail?"✅ Leyendo "+r.gmail+": te aviso cuando llegue una entrevista.":r.bad?"La conexión con Gmail venció o se revocó. Volvé a conectarla. Si pasa cada semana, publicá la app en Google Cloud (ver LEEME).":"")}catch(e){}}
+async function gmDetected(){return;
+ try{var L=await(await fetch(PUSH_API+"/api/detected?sid="+SID())).json();if(!Array.isArray(L)||!L.length)return;var ids=[],n=0;
+  L.forEach(function(d){ids.push(d.id);var k=nk(d.emp),e=d.at?isoLocal(d.at):"",x=data.filter(function(y){var z=nk(y.emp);return k.length>2&&z.length>2&&(z.indexOf(k)>=0||k.indexOf(z)>=0)})[0];
+   if(x){if(x.estado!=="Entrevista"||(e&&x.ent!==e)){x.estado="Entrevista";if(e)x.ent=e;x.mod=Date.now();n++}}
+   else{data.push({id:"gm"+d.id,emp:d.emp,pue:d.sub||"A confirmar",lnk:"",fec:hoy(),seg:mas(7),estado:"Entrevista",ent:e,mod:Date.now()});n++}});
+  persist();render();if(CODE)syncNow();
+  if(await doPush())await fetch(PUSH_API+"/api/ack",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sid:SID(),ids:ids})});
+  if(n)gst("📬 Cargué "+n+(n===1?" entrevista":" entrevistas")+" desde tu mail. Revisá la fecha y la empresa.")}catch(e){}}
+function pushInit(){if(!PUSH_API)return;$("pw").hidden=false;var m=SRV();if(!m)return;
+ if(location.hash==="#gmail=ok"){gst("✅ Gmail conectado.");history.replaceState(null,"",location.pathname)}else if(location.hash==="#gmail=no"){gst("No se pudo conectar Gmail. Probá de nuevo.");history.replaceState(null,"",location.pathname)}
+ gmStatus();gmDetected();
+ if(m==="p")try{regSW()}catch(e){}pushSync(1);pst(m==="p"?"✅ Avisos con la app cerrada activos.":"✅ Avisos por mail activos.")}
+/* ---------- instalador ---------- */
+var dip=null,UA=navigator.userAgent;
+function IOS(){return /iPhone|iPad|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1)}
+function STANDALONE(){return !!navigator.standalone||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)}
+function iosOld(){var m=UA.match(/OS (\d+)_(\d+)/);return m?(+m[1])*100+(+m[2])<1604:false}
+var SH='<svg viewBox="0 0 24 24"><path d="M12 15V3M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+function showInstall(force){var b=$("ins");if(STANDALONE()){b.hidden=true;return}
+ try{if(!force&&localStorage.getItem("postulaciones.ins")==="1")return}catch(e){}
+ var h="",btn='<button id="icls">'+(force?"Cerrar":"Ahora no")+'</button>';
+ if(IOS()){
+  if(/FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|Snapchat|GSA\//.test(UA))h='<h3>Abrila en Safari</h3><p>Este navegador interno no permite instalar la app. Copiá la dirección de la página y abrila en Safari, después seguí los pasos para instalarla.</p>';
+  else h='<h3>Instalá la app en tu iPhone o iPad</h3><p>Es necesario para recibir avisos con la app cerrada. iOS no tiene botón de instalar; se hace así:</p><ol><li>Tocá <b>Compartir</b> '+SH+' (el cuadrado con la flecha hacia arriba, en la barra de Safari).</li><li>Elegí <b>Agregar a pantalla de inicio</b> y confirmá con <b>Agregar</b>.</li><li>Cerrá Safari y abrí <b>Bitácora Jobs</b> desde el ícono nuevo.</li><li>Ahí, en "Avisos de seguimiento", tocá <b>Activar avisos con la app cerrada</b>.</li></ol><p>Ojo: la app instalada empieza vacía y no ve lo que cargaste en Safari. Antes de instalar, en "Sincronizar con mi celular y mi compu" activá la sincronización y copiá el código para pegarlo en la app instalada.</p>'+(iosOld()?'<p><b>Tu iOS es anterior a 16.4:</b> las notificaciones con la app cerrada no funcionan hasta que actualices.</p>':"");
+ }else if(dip)h='<h3>Instalá la app</h3><p>Se abre como una app, con su ícono, y recibe los avisos.</p><button id="ibtn" class="main">Instalar</button> ';
+ else if(force)h='<h3>Instalá la app</h3><p>En el menú de tu navegador elegí <b>Instalar app</b> o <b>Agregar a pantalla de inicio</b>.</p>';
+ else return;
+ b.innerHTML=h+btn;b.hidden=false;if(force)b.scrollIntoView({behavior:"smooth"})}
+$("ins").onclick=function(e){var t=e.target.closest("button");if(!t)return;
+ if(t.id==="ibtn"&&dip){dip.prompt();dip.userChoice.then(function(){dip=null;$("ins").hidden=true})}
+ if(t.id==="icls"){try{localStorage.setItem("postulaciones.ins","1")}catch(x){}$("ins").hidden=true}};
+$("iv").onclick=function(){showInstall(true)};
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();dip=e;showInstall()});
+window.addEventListener("appinstalled",function(){$("ins").hidden=true;dip=null});
+if(STANDALONE())$("ivw").hidden=true;
+/* ---------- tema ---------- */
+var TC={rosa:"#fdf0f4",verde:"#0f6b57",negro:"#000000"};
+function tema(t,keep){if(!TC[t])t="verde";document.documentElement.dataset.theme=t;
+ try{if(keep)localStorage.setItem("postulaciones.tema",t)}catch(e){}
+ var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=TC[t];
+ [].forEach.call(document.querySelectorAll("#tema button"),function(b){b.setAttribute("aria-pressed",b.dataset.t===t?"true":"false")})}
+$("tema").onclick=function(e){var b=e.target.closest("button");if(b)tema(b.dataset.t,true)};
+tema(document.documentElement.dataset.theme);
+load();autoSin();showCode();render();pushInit();if(IOS())showInstall();
+syncNow();avisar();setInterval(function(){syncNow();avisar()},60000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden){autoSin();render();syncNow();pushSync();gmDetected()}});
+</script>
+</body>
+</html>
