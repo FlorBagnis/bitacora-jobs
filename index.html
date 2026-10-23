@@ -140,7 +140,7 @@ button.live{background:var(--bad);color:#fff;border-color:transparent}
 <label>Días para el seguimiento<input id="dias" type="number" min="1" value="7"></label>
 <label>…o elegí el día exacto<input id="segf" type="date"></label>
 <label class="full">Link de la oferta (opcional)<input id="lnk" type="url" placeholder="https://"></label>
-<label class="full">Anotaciones (opcional)<textarea id="fnota" class="nt" placeholder="Requisitos, con quién hablaste, qué preparar…"></textarea></label>
+<label class="full">Anotaciones (opcional)<textarea id="fnota" class="nt" placeholder="Requisitos, con quién hablaste, qué preparar…"></textarea></label><div class="full"><div class="row" style="margin:0"><button type="button" id="fdict">📝 Dictar y transcribir</button></div><p class="stat" id="fdmsg"></p><p class="hint">Para grabar un audio, guardá la postulación y abrí «Editar y anotaciones».</p></div>
 <details class="full" id="fmas"><summary>Más datos (opcional)</summary>
 <div class="g2">
 <label>Modalidad<select id="fmd"><option value="">Sin indicar</option><option>Remoto</option><option>Híbrido</option><option>Presencial</option></select></label>
@@ -223,6 +223,7 @@ $("f").onsubmit=function(e){e.preventDefault();var d=parseInt($("dias").value,10
  nt=$("fnota").value.trim(),md=$("fmd").value,su=$("fsue").value.trim(),co=$("fcon").value.trim();
  if(nt)o.nota=nt;if(md)o.md=md;if(su)o.sue=su;if(co)o.con=co;if($("fcv").checked){o.cvd=true;o.cvf=hoy()}if($("fcvv").checked){o.cvv=true;o.cvvf=hoy()}
  data.push(o);save();this.reset();resetSeg();$("fmas").open=false;render()};
+var FD=null;$("fdict").onclick=function(){var b=this,m=$("fdmsg");if(FD){FD.stop();return} var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){m.textContent="Este navegador no permite dictado. Probá con Chrome o Safari.";return} var r=new SR(),ta=$("fnota"),base=ta.value.trim()?ta.value.trim()+"\n":"",fin="";r.lang="es-AR";r.continuous=true;r.interimResults=true; r.onresult=function(e){var im="";for(var i=e.resultIndex;i<e.results.length;i++){var t=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=t.trim()+" ";else im+=t}ta.value=base+fin+im}; r.onerror=function(e){m.textContent=e.error==="not-allowed"?"Permiso de micrófono denegado.":"El dictado se detuvo ("+e.error+")."}; r.onend=function(){ta.value=(base+fin).trim();FD=null;b.textContent="📝 Dictar y transcribir";b.classList.remove("live");m.textContent="Dictado agregado a las anotaciones."}; try{r.start();FD={stop:function(){r.stop()}};b.textContent="⏹️ Terminar dictado";b.classList.add("live");m.textContent="Escuchando… hablá y se escribe solo. Tocá de nuevo para terminar."}catch(e){m.textContent="No pude iniciar el dictado."}};
 /* ---------- lista ---------- */
 function entMs(x){return x.ent?new Date(x.ent).getTime():NaN}
 function cuando(ms){var d=new Date(ms),dd=iso(d);return (dd===hoy()?"hoy":dd===mas(1)?"mañana":fmt(dd))+" a las "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
@@ -236,7 +237,7 @@ function intBlock(x){if(x.estado!=="Entrevista")return"";var id=esc(x.id);
  function sel(f,a){return '<select data-f="'+f+'" data-id="'+id+'"><option value="">Sin indicar</option>'+a.map(function(o){return '<option'+(o===x[f]?" selected":"")+'>'+o+'</option>'}).join("")+'</select>'}
  return '<details class="mas" data-k="'+id+'|e"'+(abiertos[x.id+"|e"]?" open":"")+'><summary>🎤 Entrevista: etapa y documentación</summary><div class="g2"><label>Etapa'+sel("etapa",ETAPAS)+'</label><label>Resultado'+sel("eres",RESES)+'</label>'
  +'<label class="full">Entrevistador/a<input data-f="entv" data-id="'+id+'" value="'+esc(x.entv||"")+'" placeholder="Nombre y cargo" autocomplete="off"></label>'
- +'<label class="full">Documentá la entrevista<textarea class="nt" data-f="edoc" data-id="'+id+'" placeholder="Qué te preguntaron, cómo te fue, próximos pasos…">'+esc(x.edoc||"")+'</textarea></label><div class="full"><p class="hint">Grabá un audio de cómo te fue, o dictá y se transcribe solo en el cuadro de arriba.</p><div class="row"><button type="button" data-a="rec" data-id="'+id+'">🎙️ Grabar audio</button><button type="button" data-a="dict" data-id="'+id+'">📝 Dictar y transcribir</button></div><p class="stat" data-as="'+id+'"></p><div data-al="'+id+'"></div></div></div></details>'}
+ +'<label class="full">Documentá la entrevista<textarea class="nt" data-f="edoc" data-id="'+id+'" placeholder="Qué te preguntaron, cómo te fue, próximos pasos…">'+esc(x.edoc||"")+'</textarea></label><div class="full"><p class="hint">Grabá un audio o dictá y se transcribe solo en el cuadro de arriba.</p><div class="row"><button type="button" data-a="rec" data-t="edoc" data-id="'+id+'">🎙️ Grabar audio</button><button type="button" data-a="dict" data-t="edoc" data-id="'+id+'">📝 Dictar y transcribir</button></div><p class="stat" data-as="'+id+'|edoc"></p><div data-al="'+id+'" data-af="edoc"></div></div></div></details>'}
 function extraBlock(x){var id=esc(x.id);
  return '<details class="mas" data-k="'+id+'"'+(abiertos[x.id]?" open":"")+'><summary>✏️ Editar y anotaciones</summary><div class="g2">'
  +'<label>Empresa<input data-f="emp" data-id="'+id+'" value="'+esc(x.emp)+'" autocomplete="off"></label>'
@@ -244,6 +245,7 @@ function extraBlock(x){var id=esc(x.id);
  +'<label>Dónde te postulaste<input data-f="pla" list="plas" data-id="'+id+'" value="'+esc(x.pla||"")+'" autocomplete="off"></label>'
  +'<label>Link de la oferta<input type="url" data-f="lnk" data-id="'+id+'" value="'+esc(x.lnk||"")+'" placeholder="https://"></label>'
  +'<label class="full">Anotaciones<textarea class="nt" data-f="nota" data-id="'+id+'" placeholder="Con quién hablaste, qué te dijeron, qué preparar…">'+esc(x.nota||"")+'</textarea></label>'
+ +'<div class="full"><p class="hint">Grabá un audio o dictá y se transcribe solo en el cuadro de arriba.</p><div class="row"><button type="button" data-a="rec" data-t="nota" data-id="'+id+'">🎙️ Grabar audio</button><button type="button" data-a="dict" data-t="nota" data-id="'+id+'">📝 Dictar y transcribir</button></div><p class="stat" data-as="'+id+'|nota"></p><div data-al="'+id+'" data-af="nota"></div></div>'
  +'<label>Modalidad<select data-f="md" data-id="'+id+'">'+["","Remoto","Híbrido","Presencial"].map(function(o){return '<option value="'+o+'"'+(o===(x.md||"")?" selected":"")+'>'+(o||"Sin indicar")+'</option>'}).join("")+'</select></label>'
  +'<label>Sueldo<input data-f="sue" data-id="'+id+'" value="'+esc(x.sue||"")+'" placeholder="Ej: USD 1500" autocomplete="off"></label>'
  +'<label class="full">Contacto<input data-f="con" data-id="'+id+'" value="'+esc(x.con||"")+'" autocomplete="off"></label></div></details>'}
@@ -309,9 +311,12 @@ async function aput(r){var d=await adb();return new Promise(function(ok,no){var 
 async function adel(k){var d=await adb();return new Promise(function(ok){var t=d.transaction("a","readwrite");t.objectStore("a").delete(k);t.oncomplete=ok;t.onerror=ok})}
 async function alist(){var d=await adb();return new Promise(function(ok){var out=[],q=d.transaction("a").objectStore("a").openCursor();q.onsuccess=function(){var c=q.result;if(c){out.push(c.value);c.continue()}else ok(out)};q.onerror=function(){ok(out)}})}
 async function apurge(ids){try{var L=await alist();for(var i=0;i<L.length;i++)if(ids.indexOf(L[i].pid)>=0)await adel(L[i].k)}catch(e){}}
-function ashow(pid,t){[].forEach.call(document.querySelectorAll("[data-as]"),function(el){if(el.dataset.as===pid)el.textContent=t})}
-function setRecUi(){[].forEach.call(document.querySelectorAll('button[data-a="rec"]'),function(b){var on=REC&&REC.pid===b.dataset.id;b.textContent=on?"⏹️ Detener y guardar":"🎙️ Grabar audio";b.classList.toggle("live",!!on)});
- [].forEach.call(document.querySelectorAll('button[data-a="dict"]'),function(b){var on=DICT&&DICT.pid===b.dataset.id;b.textContent=on?"⏹️ Terminar dictado":"📝 Dictar y transcribir";b.classList.toggle("live",!!on)})}
+function ASH(pid,t,f){var k=pid+"|"+(f||"edoc");[].forEach.call(document.querySelectorAll("[data-as]"),function(el){if(el.dataset.as===k)el.textContent=t})}
+function ashow(pid,t,f){ASH(pid,t,f)}
+function setRecUi(){
+ [].forEach.call(document.querySelectorAll('button[data-a="rec"]'),function(b){var on=REC&&REC.pid===b.dataset.id&&REC.f===(b.dataset.t||"edoc");b.textContent=on?"⏹️ Detener y guardar":"🎙️ Grabar audio";b.classList.toggle("live",!!on)});
+ [].forEach.call(document.querySelectorAll('button[data-a="dict"]'),function(b){var on=DICT&&DICT.pid===b.dataset.id&&DICT.f===(b.dataset.t||"edoc");b.textContent=on?"⏹️ Terminar dictado":"📝 Dictar y transcribir";b.classList.toggle("live",!!on)});
+}
 async function aget(k){var d=await adb();return new Promise(function(ok){var q=d.transaction("a").objectStore("a").get(k);q.onsuccess=function(){ok(q.result||null)};q.onerror=function(){ok(null)}})}
 function blobB64(b){return new Promise(function(ok){var r=new FileReader();r.onload=function(){ok(r.result.split(",")[1])};r.readAsDataURL(b)})}
 function delRemote(ids){if(!CODE)return;data.forEach(function(x){if(ids.indexOf(x.id)>=0)(x.aud||[]).forEach(function(a){if(a.oid)rq("DELETE",a.oid).catch(function(){})})})}
@@ -320,38 +325,31 @@ async function syncAudio(k){var up=0,dn=0,fail=0;
   for(var j=0;j<A.length;j++){var a=A[j],r=null;try{r=await aget(a.k)}catch(e){}
    try{
     if(r&&!a.oid){var o=await(await rq("POST","",JSON.stringify({name:"audio",data:await enc({t:r.blob.type,b:await blobB64(r.blob)},k)}))).json();if(o&&o.id){a.oid=o.id;x.mod=Date.now();up++}}
-    else if(!r&&a.oid){var o2=await(await rq("GET",a.oid)).json(),p=await dec(o2.data,k);await aput({k:a.k,pid:x.id,ts:a.ts,blob:new Blob([s2b(p.b)],{type:p.t}),dur:a.dur,ext:a.ext,m:1});dn++}
+    else if(!r&&a.oid){var o2=await(await rq("GET",a.oid)).json(),p=await dec(o2.data,k);await aput({k:a.k,pid:x.id,ts:a.ts,blob:new Blob([s2b(p.b)],{type:p.t}),dur:a.dur,ext:a.ext,m:1,f:a.f});dn++}
    }catch(e){fail++}}}
  if(up)persist();return{up:up,dn:dn,fail:fail}}
 async function loadAudios(){if(!document.querySelector("[data-al]"))return;var L=[],M={};try{L=await alist()}catch(e){}L.forEach(function(r){M[r.k]=r});
  var mg=false;L.forEach(function(r){var x=data.filter(function(y){return y.id===r.pid})[0];if(!x)return;var has=(x.aud||[]).some(function(a){return a.k===r.k});
-  if(!has){if(r.m){if(Date.now()-r.ts>6e4){adel(r.k);delete M[r.k]}}else{x.aud=(x.aud||[]).concat([{k:r.k,ts:r.ts,dur:r.dur,ext:r.ext}]);x.mod=Date.now();mg=true;aput(Object.assign({},r,{m:1}))}}});
+  if(!has){if(r.m){if(Date.now()-r.ts>6e4){adel(r.k);delete M[r.k]}}else{x.aud=(x.aud||[]).concat([{k:r.k,ts:r.ts,dur:r.dur,ext:r.ext,f:r.f}]);x.mod=Date.now();mg=true;aput(Object.assign({},r,{m:1}))}}});
  if(mg)save();
- [].forEach.call(document.querySelectorAll("[data-al]"),function(el){var pid=el.dataset.al,x=data.filter(function(y){return y.id===pid})[0],A=((x&&x.aud)||[]).slice().sort(function(a,b){return a.ts-b.ts});
+ [].forEach.call(document.querySelectorAll("[data-al]"),function(el){var pid=el.dataset.al,x=data.filter(function(y){return y.id===pid})[0],A=((x&&x.aud)||[]).filter(function(a){return (a.f||"edoc")===(el.dataset.af||"edoc")}).sort(function(a,b){return a.ts-b.ts});
   el.innerHTML=A.map(function(a){var r=M[a.k],cl=a.oid?"☁️ sincronizado":CODE?"⏳ pendiente de subir":"solo en este dispositivo",d=a.dur?' · '+Math.round(a.dur)+' s':'',bt='<button type="button" data-a="adel" data-k="'+esc(a.k)+'" data-id="'+esc(pid)+'">Borrar</button>';
    if(!r)return '<div class="au"><span>🎙️ '+esc(abs(a.ts))+d+' · ⏳ descargando…</span>'+bt+'</div>';
-   var u=URL.createObjectURL(r.blob);return '<div class="au"><span>🎙️ '+esc(abs(a.ts))+d+' · '+cl+'</span><audio controls preload="none" src="'+u+'"></audio><a href="'+u+'" download="entrevista-'+esc(pid)+'-'+a.ts+'.'+(a.ext||"webm")+'">Descargar</a>'+bt+'</div>'}).join("")});
+   var u=URL.createObjectURL(r.blob);return '<div class="au"><span>🎙️ '+esc(abs(a.ts))+d+' · '+cl+'</span><audio controls preload="none" src="'+u+'"></audio><a href="'+u+'" download="'+(el.dataset.af==="nota"?"nota":"entrevista")+'-'+esc(pid)+'-'+a.ts+'.'+(a.ext||"webm")+'">Descargar</a>'+bt+'</div>'}).join("")});
  setRecUi()}
 async function audioAct(b){var a=b.dataset.a,id=b.dataset.id;
  if(a==="adel"){if(confirm("¿Borrar este audio? Se borra también de tus otros dispositivos.")){var xa=data.filter(function(y){return y.id===id})[0];if(xa){(xa.aud||[]).forEach(function(q){if(q.k===b.dataset.k&&q.oid&&CODE)rq("DELETE",q.oid).catch(function(){})});xa.aud=(xa.aud||[]).filter(function(q){return q.k!==b.dataset.k});xa.mod=Date.now();save()}try{await adel(b.dataset.k)}catch(e){}loadAudios()}return}
- if(a==="rec"){if(REC)REC.mr.stop();else startRec(id);return}
- if(a==="dict"){if(DICT)DICT.stop();else startDict(id)}}
-async function startRec(pid){if(!navigator.mediaDevices||!window.MediaRecorder){ashow(pid,"Este navegador no permite grabar audio.");return}
+ if(a==="rec"){if(REC)REC.mr.stop();else startRec(id,b.dataset.t);return}
+ if(a==="dict"){if(DICT)DICT.stop();else startDict(id,b.dataset.t)}}
+async function startRec(pid,f){f=f||"edoc";var ashow=function(p,t){return ASH(p,t,f)};if(!navigator.mediaDevices||!window.MediaRecorder){ashow(pid,"Este navegador no permite grabar audio.");return}
  try{var s=await navigator.mediaDevices.getUserMedia({audio:true}),mt=["audio/webm;codecs=opus","audio/mp4","audio/webm"].filter(function(t){return MediaRecorder.isTypeSupported(t)})[0]||"",mr=new MediaRecorder(s,mt?{mimeType:mt,audioBitsPerSecond:24000}:{audioBitsPerSecond:24000}),ch=[],t0=Date.now();
   mr.ondataavailable=function(e){if(e.data&&e.data.size)ch.push(e.data)};
   mr.onstop=async function(){s.getTracks().forEach(function(t){t.stop()});var type=mr.mimeType||mt||"audio/webm",blob=new Blob(ch,{type:type});REC=null;
-   try{await aput({k:pid+"|"+t0,pid:pid,ts:t0,blob:blob,dur:(Date.now()-t0)/1000,ext:/mp4/.test(type)?"m4a":"webm",m:1});var xx=data.filter(function(y){return y.id===pid})[0];if(xx){xx.aud=(xx.aud||[]).concat([{k:pid+"|"+t0,ts:t0,dur:(Date.now()-t0)/1000,ext:/mp4/.test(type)?"m4a":"webm"}]);xx.mod=Date.now();save()}ashow(pid,CODE?"Audio guardado. Se está sincronizando.":"Audio guardado en este dispositivo.")}catch(e){ashow(pid,"No pude guardar el audio.")}loadAudios()};
-  mr.start();REC={pid:pid,mr:mr};setTimeout(function(){if(REC&&REC.mr===mr)mr.stop()},180000);setRecUi();ashow(pid,"Grabando (máx. 3 min)… tocá «Detener y guardar» cuando termines.")}
+   try{await aput({k:pid+"|"+t0,pid:pid,ts:t0,blob:blob,dur:(Date.now()-t0)/1000,ext:/mp4/.test(type)?"m4a":"webm",m:1,f:f});var xx=data.filter(function(y){return y.id===pid})[0];if(xx){xx.aud=(xx.aud||[]).concat([{k:pid+"|"+t0,ts:t0,dur:(Date.now()-t0)/1000,ext:/mp4/.test(type)?"m4a":"webm",f:f}]);xx.mod=Date.now();save()}ashow(pid,CODE?"Audio guardado. Se está sincronizando.":"Audio guardado en este dispositivo.")}catch(e){ashow(pid,"No pude guardar el audio.")}loadAudios()};
+  mr.start();REC={pid:pid,f:f,mr:mr};setTimeout(function(){if(REC&&REC.mr===mr)mr.stop()},180000);setRecUi();ashow(pid,"Grabando (máx. 3 min)… tocá «Detener y guardar» cuando termines.")}
  catch(e){ashow(pid,"No pude acceder al micrófono. Revisá el permiso del navegador (hace falta https).")}}
-function startDict(pid){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){ashow(pid,"Este navegador no permite dictado. Probá con Chrome o Safari.");return}
- var x=data.filter(function(y){return y.id===pid})[0];if(!x)return;var r=new SR();r.lang="es-AR";r.continuous=true;r.interimResults=true;
- var base=x.edoc?x.edoc.trim()+"\n":"",fin="";
- function ta(){return document.querySelector('textarea[data-f="edoc"][data-id="'+pid+'"]')}
- r.onresult=function(e){var im="";for(var i=e.resultIndex;i<e.results.length;i++){var t=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=t.trim()+" ";else im+=t}
-  x.edoc=base+fin;var el=ta();if(el)el.value=base+fin+im};
- r.onerror=function(e){ashow(pid,e.error==="not-allowed"?"Permiso de micrófono denegado.":"El dictado se detuvo ("+e.error+").")};
- r.onend=function(){x.edoc=(base+fin).trim();x.mod=Date.now();DICT=null;save();var el=ta();if(el)el.value=x.edoc;setRecUi();ashow(pid,"Dictado guardado en la documentación.")};
- try{r.start();DICT={pid:pid,stop:function(){r.stop()}};setRecUi();ashow(pid,"Escuchando… hablá y se escribe solo. Tocá de nuevo para terminar.")}catch(e){ashow(pid,"No pude iniciar el dictado.")}}
+function startDict(pid,f){f=f==="nota"?"nota":"edoc";var ashow=function(p,t){return ASH(p,t,f)}; var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){ashow(pid,"Este navegador no permite dictado. Probá con Chrome o Safari.");return} var x=data.filter(function(y){return y.id===pid})[0];if(!x)return;var r=new SR();r.lang="es-AR";r.continuous=true;r.interimResults=true; var base=x[f]?x[f].trim()+"\n":"",fin=""; function ta(){return document.querySelector('textarea[data-f="'+f+'"][data-id="'+pid+'"]')} function pv(){if(f!=="nota")return;[].forEach.call(document.querySelectorAll(".npv"),function(p){if(p.dataset.pv===pid){p.textContent=x.nota||"";p.hidden=!x.nota}})} r.onresult=function(e){var im="";for(var i=e.resultIndex;i<e.results.length;i++){var t=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=t.trim()+" ";else im+=t}  x[f]=base+fin;var el=ta();if(el)el.value=base+fin+im};
+ r.onerror=function(e){ashow(pid,e.error==="not-allowed"?"Permiso de micrófono denegado.":"El dictado se detuvo ("+e.error+").")}; r.onend=function(){x[f]=(base+fin).trim();x.mod=Date.now();DICT=null;save();var el=ta();if(el)el.value=x[f];pv();setRecUi();ashow(pid,f==="nota"?"Dictado guardado en las anotaciones.":"Dictado guardado en la documentación.")}; try{r.start();DICT={pid:pid,f:f,stop:function(){r.stop()}};setRecUi();ashow(pid,"Escuchando… hablá y se escribe solo. Tocá de nuevo para terminar.")}catch(e){ashow(pid,"No pude iniciar el dictado.")}}
 /* ---------- estadísticas ---------- */
 function bars(rows,mx){return rows.map(function(r){return '<div class="bar"><span title="'+esc(r.l)+'">'+esc(r.l)+'</span><div class="trk"><i style="width:'+Math.round(r.v*100/mx)+'%;background:'+r.col+'"></i></div><b>'+r.v+'</b></div>'}).join("")}
 function donut(c,n){var CO={"Postulado":"#6b7f99","Entrevista":"#0f9d7a","Oferta":"#e0a526","Sin respuesta":"#9aa3a0","Rechazado":"#d9532b"},R=52,L=2*Math.PI*R,off=0,av=c.Entrevista+c.Oferta;
