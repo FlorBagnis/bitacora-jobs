@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+import crypto from "crypto";
 const URL_ = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
 const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
 
@@ -13,8 +13,8 @@ async function redis(cmd) {
   return j.result;
 }
 
-module.exports = async (req, res) => {
-  res.setHeader("Cache-Control", "no-store");
+export default async (req, res) => {
+res.setHeader("Cache-Control", "no-store");
   try {
     if (!URL_ || !TOKEN) {
       return res.status(500).json({ error: "Falta conectar la base de datos en Vercel" });
