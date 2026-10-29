@@ -1,7 +1,9 @@
 # 💼 Bitácora Jobs · Seguimiento de Postulaciones y Entrevistas
 
 <p align="center">
-  <img width="1851" height="886" alt="image" src="https://github.com/user-attachments/assets/d36d2d3e-a3d1-4a32-bdde-46d193af8144" />
+  
+<img width="1233" height="884" alt="image" src="https://github.com/user-attachments/assets/894a4be3-0a4f-4a57-bce6-ea6432f7456e" />
+
 </p>
 
 > **Bitácora Jobs** es una aplicación web (PWA) diseñada para registrar, organizar y hacer un seguimiento exhaustivo de tus búsquedas laborales, gestionar el estado de tus postulaciones, agendar entrevistas y tomar notas de voz o dictado en tiempo real.
