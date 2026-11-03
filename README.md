@@ -33,6 +33,113 @@
 
 ---
 
+## ⚙️ Automatización con Google Apps Script (Gmail ➡️ Bitácora Jobs)
+
+Para no perder ninguna invitación a entrevista, podés vincular tu cuenta de Gmail mediante un script automático que revisa tu casilla cada 15 minutos, detecta convocatorias y te envía un acceso directo para registrar la postulación en la app.
+
+### ¿Cómo configurarlo en 3 pasos?
+
+1. Entrá a [script.google.com](https://script.google.com/) y creá un **Nuevo proyecto**.
+2. Pegá el siguiente código reemplazando el contenido de `Código.gs`.
+3. Seleccioná la función `crearActivador` en el selector superior, hacé clic en **Ejecutar** y concedé los permisos a tu cuenta de Gmail.
+
+<details>
+<summary>👉 <b>Ver código del script (Apps Script)</b></summary>
+
+```javascript
+const APP_URL = "[https://bitacora-jobs.vercel.app/](https://bitacora-jobs.vercel.app/)";
+
+function avisarPostulaciones() {
+  const etiqueta = GmailApp.getUserLabelByName("Postulacion-avisada")
+    || GmailApp.createLabel("Postulacion-avisada");
+
+  const palabras = [
+    'entrevista', 'entrevistarte', 'entrevistarnos', 'entrevistas',
+    'interview', 'interviewing',
+    '"phone screen"', '"screening call"', '"intro call"', '"call with our team"',
+    '"meet with our team"', '"video call"', 'videollamada',
+    '"agendar una llamada"', '"coordinar una llamada"', '"coordinar un horario"',
+    '"schedule a call"', '"schedule a time"', '"your availability"', '"tu disponibilidad"',
+    'calendly.com', 'meet.google.com', 'zoom.us'
+  ].join(' OR ');
+
+  const consulta = [
+    'newer_than:2d',
+    '-label:Postulacion-avisada',
+    '-from:me',
+    '(' + palabras + ')',
+    '-subject:("recibimos tu postulación" OR "postulación recibida" OR "gracias por postularte" OR "thank you for applying" OR "application received" OR "we received your application")',
+    '-from:(jobalerts-noreply@linkedin.com OR noreply@glassdoor.com OR alert@indeed.com)',
+    '-category:promotions',
+    '-category:social'
+  ].join(' ');
+
+  const hilos = GmailApp.search(consulta, 0, 20);
+  const miMail = Session.getActiveUser().getEmail();
+
+  hilos.forEach(hilo => {
+    const msg = hilo.getMessages().pop();
+    const asunto = msg.getSubject();
+    const de = msg.getFrom();
+
+    const resumen = msg.getPlainBody()
+      .replace(/https?:\/\/\S+/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .substring(0, 250);
+
+    const datos = {
+      e: empresaDe(de),
+      a: asunto.substring(0, 100),
+      f: de.substring(0, 100),
+      c: resumen,
+      t: hilo.getId()
+    };
+    const codigo = Utilities.base64EncodeWebSafe(
+      Utilities.newBlob(JSON.stringify(datos)).getBytes()
+    ).replace(/=+$/, "");
+    const link = APP_URL + "#entrevista=" + codigo;
+
+    GmailApp.sendEmail(
+      miMail,
+      "[ENTREVISTA] " + asunto,
+      "Abrí este link para cargarla en Bitácora Jobs:\n" + link +
+      "\n\nDe: " + de + "\nAsunto: " + asunto + "\n\n" + resumen + "..."
+    );
+    hilo.addLabel(etiqueta);
+    hilo.markImportant();
+  });
+}
+
+function empresaDe(from) {
+  const m = from.match(/^"?([^"<]*?)"?\s*<([^>]+)>/);
+  let nombre = m ? m[1] : "";
+  const mail = m ? m[2] : from;
+
+  nombre = nombre
+    .replace(/\(via [^)]*\)/ig, "")
+    .replace(/\b(talent|recruiting|recruitment|recruiter|rrhh|hr|careers|jobs|people|team|equipo|selecci[oó]n|no-?reply)\b/ig, "")
+    .replace(/\s+/g, " ").trim();
+
+  if (nombre.length >= 2) return nombre;
+
+  const dominio = (mail.split("@")[1] || "").split(".")[0];
+  if (/^(gmail|hotmail|outlook|yahoo|live|icloud|mail|email)$/i.test(dominio)) return "";
+  return dominio.charAt(0).toUpperCase() + dominio.slice(1);
+}
+
+function crearActivador() {
+  ScriptApp.getProjectTriggers().forEach(t => {
+    if (t.getHandlerFunction() === "avisarPostulaciones") ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger("avisarPostulaciones")
+    .timeBased()
+    .everyMinutes(15)
+    .create();
+}
+
+```
+
 ## 🛠️ Tecnologías Utilizadas
 
 * **Frontend:** HTML5 semántico, CSS3 moderno (Variables CSS, Flexbox, Grid), JavaScript (Vanilla ES6+).
